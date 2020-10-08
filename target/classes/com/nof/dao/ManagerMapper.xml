@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nof.dao.ManagerMapper">
+    <insert id="addManager" parameterType="Manager">
+        insert into restaurantdb.manager(E_number,E_name,E_pwd)
+        value(#{E_number},#{E_name},#{E_pwd})
+    </insert>
+
+    <delete id="deleteManager" parameterType="int">
+        delete from restaurantdb.manager where managerId=#{managerId}
+    </delete>
+
+    <update id="updateManager" parameterType="Manager">
+        update restaurantdb.manager
+        set E_number = #{E_number},E_name = #{E_name},E_pwd = #{E_pwd}
+        where managerId = #{managerId}
+    </update>
+
+    <select id="queryManagerById" resultType="Manager">
+        select * from restaurantdb.manager
+        where managerId = #{managerId}
+    </select>
+
+    <select id="queryAllManager" resultType="Manager">
+        SELECT * from restaurantdb.manager
+    </select>
+</mapper>

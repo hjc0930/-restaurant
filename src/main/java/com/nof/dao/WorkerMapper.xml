@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nof.dao.WorkerMapper">
+    <insert id="addWorker" parameterType="Worker">
+        insert into restaurantdb.worker(W_number,W_name,W_pwd,workerGender)
+        value(#{W_number},#{W_name},#{W_pwd},#{workerGender}
+    </insert>
+
+    <delete id="deleteWorker" parameterType="int">
+        delete from restaurantdb.worker where workerId=#{workerId}
+    </delete>
+
+    <update id="updateWorker" parameterType="Worker">
+        update restaurantdb.worker
+        set W_number = #{W_number},W_name = #{W_name},W_pwd = #{W_pwd},workerGender = #{workerGender}
+        where workerId = #{workerId}
+    </update>
+
+    <select id="queryWorkerById" resultType="Worker">
+        select * from restaurantdb.worker
+        where workerId = #{workerId}
+    </select>
+
+    <select id="queryAllWorker" resultType="Worker">
+        SELECT * from restaurantdb.worker
+    </select>
+
+</mapper>

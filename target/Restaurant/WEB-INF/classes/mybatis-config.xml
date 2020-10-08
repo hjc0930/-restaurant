@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--配置数据源，交给spring去做-->
+    <typeAliases>
+        <package name="com.nof.pojo"/>
+    </typeAliases>
+    <mappers>
+        <mapper resource="com/nof/dao/BizlistMapper.xml"/>
+        <mapper resource="com/nof/dao/CustomerMapper.xml"/>
+        <mapper resource="com/nof/dao/DesklistMapper.xml"/>
+        <mapper resource="com/nof/dao/FoodlistMapper.xml"/>
+        <mapper resource="com/nof/dao/ManagerMapper.xml"/>
+        <mapper resource="com/nof/dao/OrderdishMapper.xml"/>
+        <mapper resource="com/nof/dao/WorkerMapper.xml"/>
+    </mappers>
+</configuration>

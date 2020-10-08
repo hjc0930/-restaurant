@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nof.dao.BizlistMapper">
+    <insert id="addBizlist" parameterType="Bizlist">
+        insert into restaurantdb.bizlist(deskId,customName,sal)
+        value(#{deskId},#{customName},#{sal})
+    </insert>
+    
+    <delete id="deleteBizlist" parameterType="int">
+        delete from restaurantdb.bizlist where bizlistId=#{bizlistId}
+    </delete>
+
+    <update id="updateBizlist" parameterType="Bizlist">
+        update restaurantdb.bizlist
+        set deskId = #{deskId},customName = #{customName},sal = #{sal}
+        where bizlistId = #{bizlistId}
+    </update>
+
+    <select id="queryBizlistById" resultType="Bizlist">
+        select * from restaurantdb.bizlist
+        where bizlistId = #{bizlistId}
+    </select>
+
+    <select id="queryAllBizlist" resultType="Bizlist">
+        SELECT * from restaurantdb.bizlist
+    </select>
+</mapper>

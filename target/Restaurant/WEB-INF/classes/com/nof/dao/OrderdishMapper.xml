@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nof.dao.OrderdishMapper">
+    <insert id="addOrderdish" parameterType="Orderdish">
+        insert into restaurantdb.orderdish(foodId,foodName,foodClass,foodPrice,deskId)
+        value(#{foodId},#{foodName},#{foodClass},#{foodPrice},#{deskId})
+    </insert>
+
+    <delete id="deleteOrderdish" parameterType="int">
+        delete from restaurantdb.orderdish where orderdishId=#{orderdishId}
+    </delete>
+
+    <update id="updateOrderdish" parameterType="Orderdish">
+        update restaurantdb.orderdish
+        set foodId = #{foodId},foodName = #{foodName},foodClass = #{foodClass},deskId = #{deskId}
+        where orderdishId = #{orderdishId}
+    </update>
+
+    <select id="queryOrderdishById" resultType="Orderdish">
+        select * from restaurantdb.orderdish
+        where orderdishId = #{orderdishId}
+    </select>
+
+    <select id="queryAllOrderdish" resultType="Orderdish">
+        SELECT * from restaurantdb.orderdish
+    </select>
+
+</mapper>

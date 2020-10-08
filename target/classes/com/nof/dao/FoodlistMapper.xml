@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nof.dao.FoodlistMapper">
+    <insert id="addFoodlist" parameterType="Foodlist">
+        insert into restaurantdb.foodlist(foodName,foodClass,foodPrice)
+        value(#{foodName},#{foodClass},#{foodPrice})
+    </insert>
+
+    <delete id="deleteFoodlist" parameterType="int">
+        delete from restaurantdb.foodlist where foodId=#{foodId}
+    </delete>
+
+    <update id="updateFoodlist" parameterType="Foodlist">
+        update restaurantdb.foodlist
+        set foodName = #{foodName},foodClass = #{foodClass},foodPrice = #{foodPrice}
+        where foodId = #{foodId}
+    </update>
+
+    <select id="queryFoodlistById" resultType="Foodlist">
+        select * from restaurantdb.foodlist
+        where foodId = #{foodId}
+    </select>
+
+    <select id="queryAllFoodlist" resultType="Foodlist">
+        SELECT * from restaurantdb.foodlist
+    </select>
+
+</mapper>
