@@ -15,7 +15,7 @@ public interface ManagerMapper {
     int updateManager(Manager manager);
 
     //search
-    Manager queryManagerById(int managerId);
+    Manager queryManagerByNumber(int E_number);
 
     //search *
     List<Manager> queryAllManager();

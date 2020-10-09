@@ -18,9 +18,9 @@
         where workerId = #{workerId}
     </update>
 
-    <select id="queryWorkerById" resultType="Worker">
+    <select id="queryWorkerByNumber" resultType="Worker">
         select * from restaurantdb.worker
-        where workerId = #{workerId}
+        where W_number = #{W_number}
     </select>
 
     <select id="queryAllWorker" resultType="Worker">

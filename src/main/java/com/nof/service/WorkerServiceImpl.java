@@ -17,7 +17,7 @@ public class WorkerServiceImpl implements WorkerService{
         return workerMapper.addWorker(worker);
     }
 
-    public int deleteWorker(int workerId) {
+    public int deleteWorker(Integer workerId) {
         return workerMapper.deleteWorker(workerId);
     }
 
@@ -25,9 +25,10 @@ public class WorkerServiceImpl implements WorkerService{
         return workerMapper.updateWorker(worker);
     }
 
-    public Worker queryWorkerById(int workerId) {
-        return workerMapper.queryWorkerById(workerId);
+    public Worker queryWorkerByNumber(Integer W_number) {
+        return workerMapper.queryWorkerByNumber(W_number);
     }
+
 
     public List<Worker> queryAllWorker() {
         return workerMapper.queryAllWorker();

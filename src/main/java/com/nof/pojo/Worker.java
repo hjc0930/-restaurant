@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Worker {
-    private int workerId;
-    private int W_number;
+    private Integer workerId;
+    private Integer W_number;
     private String W_name;
     private String W_pwd;
     private String workerGender;

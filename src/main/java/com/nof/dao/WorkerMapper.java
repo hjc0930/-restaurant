@@ -9,13 +9,13 @@ public interface WorkerMapper {
     int addWorker(Worker worker);
 
     //delete
-    int deleteWorker(int workerId);
+    int deleteWorker(Integer workerId);
 
     //update
     int updateWorker(Worker worker);
 
     //search
-    Worker queryWorkerById(int workerId);
+    Worker queryWorkerByNumber(Integer W_number);
 
     //search *
     List<Worker> queryAllWorker();

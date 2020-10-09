@@ -25,8 +25,9 @@ public class ManagerServiceImpl implements ManagerService{
         return managerMapper.updateManager(manager);
     }
 
-    public Manager queryManagerById(int managerId) {
-        return managerMapper.queryManagerById(managerId);
+    @Override
+    public Manager queryManagerByNumber(int E_number) {
+        return managerMapper.queryManagerByNumber(E_number);
     }
 
     public List<Manager> queryAllManager() {

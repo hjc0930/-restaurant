@@ -18,9 +18,9 @@
         where managerId = #{managerId}
     </update>
 
-    <select id="queryManagerById" resultType="Manager">
+    <select id="queryManagerByNumber" resultType="Manager">
         select * from restaurantdb.manager
-        where managerId = #{managerId}
+        where E_number = #{E_number}
     </select>
 
     <select id="queryAllManager" resultType="Manager">
