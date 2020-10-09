@@ -9,10 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class LoginController {
@@ -50,12 +46,12 @@ public class LoginController {
     //跳到员工页面
     @RequestMapping("/toWorker")
     public String toWorker(){
-        return "allBizlist";
+        return "Worker";
     }
 
     //跳到管理员页面
     @RequestMapping("/toManager")
     public String toManager(){
-        return "manager";
+        return "Manager";
     }
 }

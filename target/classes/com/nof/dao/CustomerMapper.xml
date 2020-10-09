@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nof.dao.CustomerMapper">
     <insert id="addCustomer" parameterType="Customer">
-        insert into restaurantdb.customer(customName,custGender)
-        value(#{customName},#{custGender})
+        insert into restaurantdb.customer(customName,customTel,custGender)
+        value(#{customName},#{customTel},#{custGender})
     </insert>
 
     <delete id="deleteCustomer" parameterType="int">
@@ -14,7 +14,7 @@
 
     <update id="updateCustomer" parameterType="Customer">
         update restaurantdb.customer
-        set customName = #{customName},custGender = #{custGender}
+        set customName = #{customName},customTel = #{customTel},custGender = #{custGender}
         where custId = #{custId}
     </update>
 

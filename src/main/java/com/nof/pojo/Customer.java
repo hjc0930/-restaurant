@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class Customer {
     private int custId;
     private String customName;
-    private String cusGender;
+    private String customTel;
+    private String custGender;
 }

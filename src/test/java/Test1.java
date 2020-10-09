@@ -19,19 +19,20 @@ public class Test1 {
 
         }*/
 
-        /*CustomerService customerServiceImpl = (CustomerService) Context.getBean("CustomerServiceImpl");
+        CustomerService customerServiceImpl = (CustomerService) Context.getBean("CustomerServiceImpl");
         for (Customer customer : customerServiceImpl.queryAllCustomer()) {
             System.out.println(customer);
 
-        }*/
-        WorkerService workerServiceImpl = (WorkerService) Context.getBean("WorkerServiceImpl");
+        }
+       /* WorkerService workerServiceImpl = (WorkerService) Context.getBean("WorkerServiceImpl");*/
 
         /*for (Worker worker : workerServiceImpl.queryWorkerByNumber(6666601)) {
             System.out.println(worker);
 
         }*/
-        Worker worker = workerServiceImpl.queryWorkerByNumber(6666601);
-        System.out.println(worker);
+       /* Worker worker = workerServiceImpl.queryWorkerByNumber(6666601);
+        System.out.println(worker);*/
+
 
     }
 }
