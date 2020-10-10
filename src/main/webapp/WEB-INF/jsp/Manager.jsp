@@ -44,8 +44,6 @@
         #projectList .zl_table th , #projectList .zl_table td:first-child{text-align: center; text-indent: 0;}
         #projectList .zl_table td{ text-indent: 12px;}
         #projectList .zl_table td:nth-child(3) , #projectList .zl_table td:nth-child(4) , #projectList .zl_table td:nth-child(5){text-indent: 0; text-align: center;}
-        #projectList .zl_table .iconword{margin-right: 13px; color: #0173ca;}
-        #projectList .zl_table .iconxiazai{color: #3da2f0;}
         #projectList .zl_table .iconshanchu{color: #d94141;}
 
         #projectList .zl_footer{height: 70px; border: solid 1px #dbe7ed; border-top: none; margin-top: 20px; overflow: hidden;}
@@ -54,12 +52,24 @@
         #projectList .zl_page{line-height: 24px; margin: 22px 18px 0 0; font-size: 0;}
         #projectList .zl_page a{font-size: 12px; color: #333333; border: solid 1px #e6e6e6; padding: 6px 9px; margin-left: 10px;}
         #projectList .zl_page a.active{border: solid 1px #3797e0; background: #42adff; color: white;}
+        .zl_table tbody tr{text-align: center;line-height: 32px;}
+        .zl_table tbody td{border-right: solid 1px #dbe7ed;}
+        .zl_table tbody td:nth-of-type(6){padding-right: 10px; box-sizing: border-box;}
+        .zl_table tbody td:last-of-type{padding-right: 12px; box-sizing: border-box;}
+        .zl_table tbody .iconbianji{font-size: 20px; position: relative; top: 3px;}
+        .zl_table tbody td a{color: black;}
+        .zl_table tbody td a span{font-size: 14px;}
+        .zl_table tbody td a span:hover{color: red; text-decoration: underline;}
     </style>
     <script>
         $(function () {
             //左侧菜单栏切换
             Tab("#list li");
+            //获得管理员姓名并显示
             getName();
+            //信息读取
+            getInfo();
+
         });
         //选项卡
         function Tab(node){
@@ -70,7 +80,6 @@
                 $(".projectList_cons").eq($(this).index()).css("display","block");
             });
         }
-        //获得管理员姓名并显示
         function getName() {
             /*?username=xxx*/
             var str = location.search;
@@ -82,6 +91,76 @@
                 },
                 success:function (data) {
                     $("#managerName").html(data);
+                }
+            })
+        }
+        function getInfo() {
+            /*获得员工信息*/
+            $.post({
+                url: ("${pageContext.request.contextPath}/getworker"),
+                success:function (data) {
+                    var workerInfo = JSON.parse(data);
+                    var str = ``;
+                    for(var i = 0; i< workerInfo.length; i++){
+                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${workerInfo[i].workerId}"}</td>
+                            <td>${"${workerInfo[i].w_number}"}</td>
+                            <td>${"${workerInfo[i].w_name}"}</td>
+                            <td>${"${workerInfo[i].w_pwd}"}</td>
+                            <td>${"${workerInfo[i].workerGender}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                    }
+                    $("#worker").html(str);
+                }
+            })
+            /*获得菜谱信息*/
+            $.post({
+                url:("${pageContext.request.contextPath}/getfoodlist"),
+                success: function (data) {
+                    var foodListInfo = JSON.parse(data);
+                    var str = ``;
+                    for(var i = 0; i < foodListInfo.length; i++){
+                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${foodListInfo[i].foodId}"}</td>
+                            <td>${"${foodListInfo[i].foodName}"}</td>
+                            <td>${"${foodListInfo[i].foodClass}"}</td>
+                            <td>${"${foodListInfo[i].foodPrice}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                    }
+                    $("#foodlist").html(str);
+                }
+            })
+
+            /*获得总营业信息*/
+            $.post({
+                url:("${pageContext.request.contextPath}/getbizlist"),
+                success:function (data) {
+                    var bizListInfo = JSON.parse(data);
+                    var str =``;
+                    for (var i = 0; i < bizListInfo.length; i++){
+                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${bizListInfo[i].bizlistId}"}</td>
+                            <td>${"${bizListInfo[i].deskId}"}</td>
+                            <td>${"${bizListInfo[i].customName}"}</td>
+                            <td>${"${bizListInfo[i].sal}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                    }
+                    $("#bizlist").html(str);
                 }
             })
         }
@@ -144,12 +223,10 @@
                             <th width="148px">员工姓名</th>
                             <th width="168px">密码</th>
                             <th width="168px">性别</th>
-                            <th width="81px">操作</th>
+                            <th width="168px">操作</th>
                         </tr>
                         </thead>
-                        <tbody>
-
-                        </tbody>
+                        <tbody id="worker"></tbody>
                     </table>
                 </div>
             </div>
@@ -167,12 +244,10 @@
                             <th width="167px">菜名</th>
                             <th width="148px">菜谱类型</th>
                             <th width="168px">价格</th>
-                            <th width="81px">操作</th>
+                            <th width="168px">操作</th>
                         </tr>
                         </thead>
-                        <tbody>
-
-                        </tbody>
+                        <tbody id="foodlist"></tbody>
                     </table>
                 </div>
             </div>
@@ -190,12 +265,10 @@
                             <th width="167px">座位号</th>
                             <th width="148px">客户名</th>
                             <th width="168px">账单</th>
-                            <th width="81px">操作</th>
+                            <th width="168px">操作</th>
                         </tr>
                         </thead>
-                        <tbody>
-
-                        </tbody>
+                        <tbody id="bizlist"></tbody>
                     </table>
                 </div>
             </div>

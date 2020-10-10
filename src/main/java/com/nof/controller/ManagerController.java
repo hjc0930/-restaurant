@@ -18,7 +18,6 @@ public class ManagerController {
     @ResponseBody
     public String getManagerName(Integer m_number){
         Manager manager = managerService.queryManagerByNumber(m_number);
-
         return manager.getE_name();
     }
 }
