@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Orderdish {
-    private int orderdushId;
+    private int orderdishId;
     private int foodId;
     private String foodName;
     private String foodClass;

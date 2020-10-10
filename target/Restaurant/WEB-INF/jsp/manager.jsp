@@ -65,7 +65,9 @@
         $(function () {
             //左侧菜单栏切换
             Tab("#list li");
+            //获得管理员姓名并显示
             getName();
+            //信息读取
             getInfo();
 
         });
@@ -78,7 +80,6 @@
                 $(".projectList_cons").eq($(this).index()).css("display","block");
             });
         }
-        //获得管理员姓名并显示
         function getName() {
             /*?username=xxx*/
             var str = location.search;

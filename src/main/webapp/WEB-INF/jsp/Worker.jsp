@@ -22,7 +22,6 @@
         #projectList .projectList_btns li.active{color: white; background: #018ffb; position: relative;}
         #projectList .projectList_btns li.active:after{content: ""; display: block; width: 16px;height: 6px; position: absolute;bottom: -6px; left: 50%; margin-left: -8px;}
 
-        /* #projectList .projectList_cons{} */
         #projectList .projectList_cons > div{display: none;}
         #projectList .projectList_cons > div.show{display: block;}
 
@@ -54,6 +53,14 @@
         #projectList .zl_page{line-height: 24px; margin: 22px 18px 0 0; font-size: 0;}
         #projectList .zl_page a{font-size: 12px; color: #333333; border: solid 1px #e6e6e6; padding: 6px 9px; margin-left: 10px;}
         #projectList .zl_page a.active{border: solid 1px #3797e0; background: #42adff; color: white;}
+        .zl_table tbody tr{text-align: center;line-height: 32px;}
+        .zl_table tbody td{border-right: solid 1px #dbe7ed;}
+        .zl_table tbody td:nth-of-type(6){padding-right: 10px; box-sizing: border-box;}
+        .zl_table tbody td:last-of-type{padding-right: 12px; box-sizing: border-box;}
+        .zl_table tbody .iconbianji{font-size: 20px; position: relative; top: 3px;}
+        .zl_table tbody td a{color: black;}
+        .zl_table tbody td a span{font-size: 14px;}
+        .zl_table tbody td a span:hover{color: red; text-decoration: underline;}
     </style>
     <script>
         $(function () {
@@ -61,6 +68,9 @@
             Tab("#list li");
             //获得姓名并显示
             getName();
+
+            //获取信息
+            getInfo();
         });
         //选项卡
         function Tab(node){
@@ -85,6 +95,77 @@
                     $("#workerName").html(data);
                 }
             })
+        }
+        function getInfo() {
+            //顾客信息
+            $.post({
+                url: ("${pageContext.request.contextPath}/getcustomer"),
+                success: function (data) {
+                    var customerInfo = JSON.parse(data);
+                    var str =``;
+                    for (var i = 0; i < customerInfo.length; i++){
+                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${customerInfo[i].custId}"}</td>
+                            <td>${"${customerInfo[i].customName}"}</td>
+                            <td>${"${customerInfo[i].customTel}"}</td>
+                            <td>${"${customerInfo[i].custGender}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                    }
+                    $("#customer").html(str);
+                }
+            });
+            //订座信息
+            $.post({
+                url:("${pageContext.request.contextPath}/getdesklist"),
+                success: function (data) {
+                    var deskListInfo = JSON.parse(data);
+                    var str = ``;
+                    for (var i = 0; i < deskListInfo.length; i++){
+                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${deskListInfo[i].deskId}"}</td>
+                            <td>${"${deskListInfo[i].deskState}"}</td>
+                            <td>${"${deskListInfo[i].customName}"}</td>
+                            <td>${"${deskListInfo[i].bookNumber}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                    }
+                    $("#desklist").html(str);
+                }
+            });
+            //订单管理
+            $.post({
+                url:("${pageContext.request.contextPath}/getorderdish"),
+                success: function (data) {
+                    var orderDishInfo = JSON.parse(data);
+                    var str = ``;
+                    for (var i = 0; i < orderDishInfo.length; i++){
+                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${orderDishInfo[i].orderdishId}"}</td>
+                            <td>${"${orderDishInfo[i].foodId}"}</td>
+                            <td>${"${orderDishInfo[i].foodName}"}</td>
+                            <td>${"${orderDishInfo[i].foodClass}"}</td>
+                            <td>${"${orderDishInfo[i].foodPrice}"}</td>
+                            <td>${"${orderDishInfo[i].deskId}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                          
+                            </td>
+                        </tr>`;
+                    }
+                    $("#orderdish").html(str);
+                }
+            });
         }
     </script>
 </head>
@@ -144,12 +225,10 @@
                             <th width="167px">顾客姓名</th>
                             <th width="148px">联系电话</th>
                             <th width="148px">顾客性别</th>
-                            <th width="81px">操作</th>
+                            <th width="168px">操作</th>
                         </tr>
                         </thead>
-                        <tbody>
-
-                        </tbody>
+                        <tbody id="customer"></tbody>
                     </table>
                 </div>
             </div>
@@ -167,12 +246,10 @@
                             <th width="167px">座位状态</th>
                             <th width="148px">顾客姓名</th>
                             <th width="168px">预定人数</th>
-                            <th width="81px">操作</th>
+                            <th width="168px">操作</th>
                         </tr>
                         </thead>
-                        <tbody>
-
-                        </tbody>
+                        <tbody id="desklist"></tbody>
                     </table>
                 </div>
             </div>
@@ -187,15 +264,15 @@
                         <tr>
                             <th width="49px"><input type="checkbox"></th>
                             <th>订单Id</th>
-                            <th width="167px">菜名</th>
+                            <th width="167px">菜号</th>
+                            <th width="148px">菜名</th>
                             <th width="148px">菜系</th>
                             <th width="168px">价格</th>
-                            <th width="81px">操作</th>
+                            <th width="168px">桌号</th>
+                            <th width="168px">操作</th>
                         </tr>
                         </thead>
-                        <tbody>
-
-                        </tbody>
+                        <tbody id="orderdish"></tbody>
                     </table>
                 </div>
             </div>
