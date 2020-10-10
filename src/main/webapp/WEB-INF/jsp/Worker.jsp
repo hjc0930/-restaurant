@@ -57,23 +57,45 @@
     </style>
     <script>
         $(function () {
-            $("#list li").click(function () {
+            //左侧菜单栏切换
+            Tab("#list li");
+            //获得姓名并显示
+            getName();
+        });
+        //选项卡
+        function Tab(node){
+            $(node).click(function () {
                 $(".projectList_cons").css("display","none");
-                $("#list li").attr("class","");
+                $(node).attr("class","");
                 $(this).attr("class","active");
                 $(".projectList_cons").eq($(this).index()).css("display","block");
+            });
+        }
+        //获得管理员姓名并显示
+        function getName() {
+            /*?username=xxx*/
+            var str = location.search;
+            var w_number = str.substring(str.indexOf("=") + 1);
+            $.post({
+                url:("${pageContext.request.contextPath}/getWname"),
+                data:{
+                    w_number:w_number
+                },
+                success:function (data) {
+                    $("#workerName").html(data);
+                }
             })
-        })
+        }
     </script>
 </head>
 <body>
 <header id="header" class="clear">
     <hgroup class="header_logo l clear">
-        <h2 class="l">校园点餐管理系统后台</h2>
+        <h2 class="l">校园点餐管理系统前台</h2>
     </hgroup>
     <ul class="header_nav r clear">
         <li>
-            <i class="iconfont iconwode"></i>欢迎您,<span id="manager"></span>管理员
+            <i class="iconfont iconwode"></i>欢迎您,<span id="workerName"></span>&nbsp;管理员
         </li>
         <li>
             <i class="iconfont iconyuechi"></i><a href="#">修改密码</a>

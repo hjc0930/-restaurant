@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>后台</title>
     <script src="${pageContext.request.contextPath}/statics/js/jquery-3.5.1.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/css/common.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/iconfont/iconfont.css">
@@ -57,13 +57,34 @@
     </style>
     <script>
         $(function () {
-            $("#list li").click(function () {
+            //左侧菜单栏切换
+            Tab("#list li");
+            getName();
+        });
+        //选项卡
+        function Tab(node){
+            $(node).click(function () {
                 $(".projectList_cons").css("display","none");
-                $("#list li").attr("class","");
+                $(node).attr("class","");
                 $(this).attr("class","active");
                 $(".projectList_cons").eq($(this).index()).css("display","block");
+            });
+        }
+        //获得管理员姓名并显示
+        function getName() {
+            /*?username=xxx*/
+            var str = location.search;
+            var m_number = str.substring(str.indexOf("=") + 1);
+            $.post({
+                url:("${pageContext.request.contextPath}/getMname"),
+                data:{
+                    m_number: m_number
+                },
+                success:function (data) {
+                    $("#managerName").html(data);
+                }
             })
-        })
+        }
     </script>
 </head>
 <body>
@@ -73,7 +94,7 @@
     </hgroup>
     <ul class="header_nav r clear">
         <li>
-            <i class="iconfont iconwode"></i>欢迎您,<span id="manager"></span>管理员
+            <i class="iconfont iconwode"></i>欢迎您,<span id="managerName"></span>&nbsp;管理员
         </li>
         <li>
             <i class="iconfont iconyuechi"></i><a href="#">修改密码</a>

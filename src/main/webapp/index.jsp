@@ -14,16 +14,19 @@
                 $.post({
                     url:"${pageContext.request.contextPath}/login",
                     data:{
-                        username: $("#name").val(),
+                        userNumber: $("#number").val(),
                         password: $("#pwd").val()
                     },
                     success: function (data) {
-                        if(data.toString() == "1"){
-                            alert("登录成功");
-                            location.replace("${pageContext.request.contextPath}/toWorker");
-                        }else if(data.toString() == "2"){
-                            alert("登录成功");
-                            location.replace("${pageContext.request.contextPath}/toManager");
+                        /*{"userExsit":1,"msg":"黄玉锌"}*/
+                        var str = JSON.parse(data);
+                        var username = str.msg;
+                        if(str.userExsit == 1){
+                            location.assign("${pageContext.request.contextPath}/toWorker?username="+username);
+                        }else if(str.userExsit == "2"){
+                            location.assign("${pageContext.request.contextPath}/toManager?username="+username);
+                        }else{
+                            alert("登录失败，用户名或密码错误");
                         }
                     }
                 })
@@ -40,8 +43,8 @@
         </center>
         <form>
             <div class="form-group">
-                <label for="name">用户名:</label>
-                <input id="name" type="text" class="form-control" style="color:red;">
+                <label for="number">登录名:</label>
+                <input id="number" type="text" class="form-control" style="color:red;">
             </div>
             <div class="form-group">
                 <label for="pwd">密码</label>
