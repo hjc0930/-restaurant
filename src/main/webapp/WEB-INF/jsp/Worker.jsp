@@ -8,6 +8,7 @@
     <script src="${pageContext.request.contextPath}/statics/js/jquery-3.5.1.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/css/common.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/iconfont/iconfont.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/css/bootstrap.css">
     <style>
         #projectTitle .projectTitle_text{margin: 21px 0 0 22px; color: #333333;}
         #projectTitle .projectTitle_text h2{font-size: 24px; line-height: 25px;}
@@ -68,7 +69,6 @@
             Tab("#list li");
             //获得姓名并显示
             getName();
-
             //获取信息
             getInfo();
         });

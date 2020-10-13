@@ -15,7 +15,7 @@ public interface ManagerService {
     int updateManager(Manager manager);
 
     //search
-    Manager queryManagerByNumber(int E_number);
+    Manager queryManagerByNumber(String E_number);
 
     //search *
     List<Manager> queryAllManager();

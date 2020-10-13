@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>后台</title>
-    <script src="${pageContext.request.contextPath}/statics/js/jquery-3.5.1.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/css/common.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/iconfont/iconfont.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/css/bootstrap.css">
+    <script src="${pageContext.request.contextPath}/statics/js/jquery-3.5.1.js"></script>
+    <script src="${pageContext.request.contextPath}/statics/js/bootstrap.js"></script>
     <style>
         #projectTitle .projectTitle_text{margin: 21px 0 0 22px; color: #333333;}
         #projectTitle .projectTitle_text h2{font-size: 24px; line-height: 25px;}
@@ -69,8 +71,10 @@
             getName();
             //信息读取
             getInfo();
+            //信息添加
+            addInfo();
 
-        });
+        })
         //选项卡
         function Tab(node){
             $(node).click(function () {
@@ -80,6 +84,7 @@
                 $(".projectList_cons").eq($(this).index()).css("display","block");
             });
         }
+        //获得管理员姓名并显示
         function getName() {
             /*?username=xxx*/
             var str = location.search;
@@ -94,7 +99,11 @@
                 }
             })
         }
+        //信息读取
         function getInfo() {
+            /*$("#worker").html("");
+            $("#foodlist").html("");
+            $("#bizlist").html("");*/
             /*获得员工信息*/
             $.post({
                 url: ("${pageContext.request.contextPath}/getworker"),
@@ -164,6 +173,145 @@
                 }
             })
         }
+        //添加信息
+        function addInfo() {
+            //添加员工信息
+            $("#addWorkerTarget").click(function () {
+                $("#workerNumber").val(Number($("#worker tr:last td:eq(2)").html()) + 1);
+            });
+            $("#addWorkerBtn").click(function () {
+                $.post({
+                    url:("${pageContext.request.contextPath}/addworker"),
+                    data: {
+                        W_number: $("#workerNumber").val(),
+                        W_name: $("#workerName").val(),
+                        W_pwd: $("#workerPassword").val(),
+                        workerGender: $("#workerGender").val()
+                    },
+                    success:function (data) {
+                        if(data != null){
+                            alert(data);
+                            //添加成功后关闭模态框
+                            $("#addWorker").modal('hide');
+                            //重新请求员工信息
+                            $("#worker").html("");
+                            $.post({
+                                url: ("${pageContext.request.contextPath}/getworker"),
+                                success:function (data) {
+                                    var workerInfo = JSON.parse(data);
+                                    var str = ``;
+                                    for(var i = 0; i< workerInfo.length; i++){
+                                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${workerInfo[i].workerId}"}</td>
+                            <td>${"${workerInfo[i].w_number}"}</td>
+                            <td>${"${workerInfo[i].w_name}"}</td>
+                            <td>${"${workerInfo[i].w_pwd}"}</td>
+                            <td>${"${workerInfo[i].workerGender}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                    }
+                                    $("#worker").html(str);
+                                }
+                            })
+                        }else{
+                            alert("添加失败，请重试");
+                        }
+                    }
+                })
+            });
+
+            //添加菜谱
+            $("#addFoodListBtn").click(function () {
+                $.post({
+                    url:("${pageContext.request.contextPath}/addfoodlist"),
+                    data:{
+                        foodName: $("#foodListName").val(),
+                        foodClass:$("#foodListClass").val(),
+                        foodPrice:$("#foodListPrice").val()
+                    },
+                    success:function (data) {
+                        if(data != null){
+                            alert(data);
+                            //添加成功后关闭模态框
+                            $("#addFoodList").modal('hide');
+                            /*获得菜谱信息*/
+                            $("#foodlist").html("");
+                            $.post({
+                                url:("${pageContext.request.contextPath}/getfoodlist"),
+                                success: function (data) {
+                                    var foodListInfo = JSON.parse(data);
+                                    var str = ``;
+                                    for(var i = 0; i < foodListInfo.length; i++){
+                                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${foodListInfo[i].foodId}"}</td>
+                            <td>${"${foodListInfo[i].foodName}"}</td>
+                            <td>${"${foodListInfo[i].foodClass}"}</td>
+                            <td>${"${foodListInfo[i].foodPrice}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                    }
+                                    $("#foodlist").html(str);
+                                }
+                            })
+                        }else{
+                            alert("添加失败，请重试");
+                        }
+                    }
+                });
+            })
+
+            //添加营业信息
+            $("#addBizListBtn").click(function () {
+                $.post({
+                    url:("${pageContext.request.contextPath}/addbizlist"),
+                    data:{
+                        deskId: $("#deskId").val(),
+                        customName: $("#customName").val(),
+                        sal:$("#Sal").val()
+                    },
+                    success:function (data) {
+                        if(data != null){
+                            alert(data);
+                            //添加成功后关闭模态框
+                            $("#addBizList").modal('hide');
+                            /*重新获得营业信息*/
+                            $("#bizlist").html("");
+                            $.post({
+                                url:("${pageContext.request.contextPath}/getbizlist"),
+                                success:function (data) {
+                                    var bizListInfo = JSON.parse(data);
+                                    var str =``;
+                                    for (var i = 0; i < bizListInfo.length; i++){
+                                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${bizListInfo[i].bizlistId}"}</td>
+                            <td>${"${bizListInfo[i].deskId}"}</td>
+                            <td>${"${bizListInfo[i].customName}"}</td>
+                            <td>${"${bizListInfo[i].sal}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                    }
+                                    $("#bizlist").html(str);
+                                }
+                            })
+                        }else {
+                            alert("添加失败，请重试");
+                        }
+                    }
+                })
+            })
+        }
     </script>
 </head>
 <body>
@@ -205,15 +353,60 @@
         </li>
     </ul>
 </aside>
+
 <main id="main">
     <section class="main_contaiter">
         <section id="projectList">
 
-            <div class="projectList_cons" style="display: block">
+            <div class="projectList_cons clear" style="display: block">
                 <div class="show clear">
-                    <div class="zl_search r">
-                        <input type="text" placeholder="请输入关键字"><button class="iconfont iconMagnifier"></button>
+                    <!-- 按钮触发模态框 -->
+                    <button id="addWorkerTarget" class="btn btn-primary" data-toggle="modal" data-target="#addWorker">
+                        添加员工
+                    </button>
+                    <!-- 模态框（Modal） -->
+                    <div class="modal fade" id="addWorker" tabindex="-1" role="dialog" aria-labelledby="workerModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="workerModalLabel">
+                                        员工信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="workerNumber">员工编号</label>
+                                            <input type="text" class="form-control" id="workerNumber" placeholder="员工编号">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="workerName">员工姓名</label>
+                                            <input type="text" class="form-control" id="workerName" placeholder="员工姓名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="workerPassword">员工密码</label>
+                                            <input type="text" class="form-control" id="workerPassword" placeholder="员工密码" value="123456">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="workerGender">员工性别</label>
+                                            <input type="text" class="form-control" id="workerGender" placeholder="员工性别">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="addWorkerBtn" type="button" class="btn btn-primary">
+                                        添加
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
                     </div>
+
                     <table class="zl_table">
                         <thead>
                         <tr>
@@ -231,11 +424,51 @@
                 </div>
             </div>
 
-            <div class="projectList_cons">
+            <div class="projectList_cons clear">
                 <div class="show clear">
-                    <div class="zl_search r">
-                        <input type="text" placeholder="请输入关键字"><button class="iconfont iconMagnifier"></button>
+                    <!-- 按钮触发模态框 -->
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addFoodList">
+                        添加菜谱
+                    </button>
+                    <!-- 模态框（Modal） -->
+                    <div class="modal fade" id="addFoodList" tabindex="-1" role="dialog" aria-labelledby="foodListModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="foodListModalLabel">
+                                        菜谱信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="foodListName">菜名</label>
+                                            <input type="text" class="form-control" id="foodListName" placeholder="菜名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foodListClass">菜类型</label>
+                                            <input type="text" class="form-control" id="foodListClass" placeholder="菜类型">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foodListPrice">价格</label>
+                                            <input type="text" class="form-control" id="foodListPrice" placeholder="价格">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="addFoodListBtn" type="button" class="btn btn-primary">
+                                        添加
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
                     </div>
+
                     <table class="zl_table">
                         <thead>
                         <tr>
@@ -252,11 +485,51 @@
                 </div>
             </div>
 
-            <div class="projectList_cons">
+            <div class="projectList_cons clear">
                 <div class="show clear">
-                    <div class="zl_search r">
-                        <input type="text" placeholder="请输入关键字"><button class="iconfont iconMagnifier"></button>
+                    <!-- 按钮触发模态框 -->
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addBizList">
+                        添加营业信息
+                    </button>
+                    <!-- 模态框（Modal） -->
+                    <div class="modal fade" id="addBizList" tabindex="-1" role="dialog" aria-labelledby="bizListtModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="bizListtModalLabel">
+                                        营业信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="deskId">座位号</label>
+                                            <input type="text" class="form-control" id="deskId" placeholder="座位号">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="customName">订单客户</label>
+                                            <input type="text" class="form-control" id="customName" placeholder="订单客户">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Sal">订单总额</label>
+                                            <input type="text" class="form-control" id="Sal" placeholder="订单总额">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="addBizListBtn" type="button" class="btn btn-primary">
+                                        添加
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
                     </div>
+
                     <table class="zl_table">
                         <thead>
                         <tr>

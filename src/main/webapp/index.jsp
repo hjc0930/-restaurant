@@ -18,7 +18,7 @@
                         password: $("#pwd").val()
                     },
                     success: function (data) {
-                        /*{"userExsit":1,"msg":"黄玉锌"}*/
+                        /*{"userExsit":1,"msg":"username"}*/
                         var str = JSON.parse(data);
                         var username = str.msg;
                         if(str.userExsit == 1){

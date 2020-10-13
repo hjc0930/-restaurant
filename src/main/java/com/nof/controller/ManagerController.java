@@ -16,7 +16,7 @@ public class ManagerController {
 
     @RequestMapping("/getMname")
     @ResponseBody
-    public String getManagerName(Integer m_number){
+    public String getManagerName(String m_number){
         Manager manager = managerService.queryManagerByNumber(m_number);
         return manager.getE_name();
     }

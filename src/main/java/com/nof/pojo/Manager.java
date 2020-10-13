@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Manager {
     private int managerId;
-    private int E_number;
+    private String E_number;
     private String E_name;
     private String E_pwd;
 }

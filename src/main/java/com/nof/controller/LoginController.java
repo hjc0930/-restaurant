@@ -27,7 +27,7 @@ public class LoginController {
 
     @RequestMapping("/login")
     @ResponseBody
-    public String login(Integer userNumber, String password) throws JsonProcessingException {
+    public String login(String userNumber, String password) throws JsonProcessingException {
         /*声明一个map集合用来存储传回的数据*/
         Map<String,Object> map = new HashMap<String, Object>();
 

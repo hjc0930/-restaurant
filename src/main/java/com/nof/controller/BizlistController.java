@@ -25,4 +25,14 @@ public class BizlistController {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(bizlists);
     }
+
+    @RequestMapping("/addbizlist")
+    @ResponseBody
+    public String addBizList(Bizlist bizlist){
+        String isAdd = null;
+        if(bizlistService.addBizlist(bizlist) == 1){
+            isAdd = "添加成功";
+        }
+        return isAdd;
+    }
 }

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class Bizlist {
     private int bizlistId;
     private int deskId;
-    private String CustomName;
-    private double sal;
+    private String customName;
+    private Double sal;
 }

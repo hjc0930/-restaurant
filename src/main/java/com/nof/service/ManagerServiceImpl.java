@@ -26,7 +26,7 @@ public class ManagerServiceImpl implements ManagerService{
     }
 
     @Override
-    public Manager queryManagerByNumber(int E_number) {
+    public Manager queryManagerByNumber(String E_number) {
         return managerMapper.queryManagerByNumber(E_number);
     }
 

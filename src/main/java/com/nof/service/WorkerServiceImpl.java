@@ -25,7 +25,7 @@ public class WorkerServiceImpl implements WorkerService{
         return workerMapper.updateWorker(worker);
     }
 
-    public Worker queryWorkerByNumber(Integer W_number) {
+    public Worker queryWorkerByNumber(String W_number) {
         return workerMapper.queryWorkerByNumber(W_number);
     }
 

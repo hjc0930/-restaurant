@@ -11,5 +11,5 @@ public class Foodlist {
     private int foodId;
     private String foodName;
     private String foodClass;
-    private double foodPrice;
+    private Double foodPrice;
 }

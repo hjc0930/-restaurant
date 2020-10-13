@@ -26,4 +26,16 @@ public class FoodlistController {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(foodlists);
     }
+
+    @RequestMapping("/addfoodlist")
+    @ResponseBody
+    public String addFoodlist(Foodlist foodlist){
+        System.out.println(foodlist);
+        String isAdd = null;
+        if(foodlistService.addFoodlist(foodlist) == 1){
+            isAdd = "添加成功!";
+        }
+        return isAdd;
+
+    }
 }

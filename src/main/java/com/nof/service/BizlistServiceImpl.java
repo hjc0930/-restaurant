@@ -12,6 +12,7 @@ public class BizlistServiceImpl implements BizlistService{
     //调用dao层的操作，设置一个set接口，方便Spring管理
     private BizlistMapper bizlistMapper;
     public void setBizlistMapper(BizlistMapper bizlistMapper) {
+
         this.bizlistMapper = bizlistMapper;
     }
 

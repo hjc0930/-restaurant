@@ -15,7 +15,7 @@ public interface WorkerService {
     int updateWorker(Worker worker);
 
     //search
-    Worker queryWorkerByNumber(Integer W_number);
+    Worker queryWorkerByNumber(String W_number);
 
     //search *
     List<Worker> queryAllWorker();
