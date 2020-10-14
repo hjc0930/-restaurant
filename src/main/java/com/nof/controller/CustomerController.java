@@ -26,4 +26,13 @@ public class CustomerController {
         return mapper.writeValueAsString(customers);
     }
 
+    @RequestMapping("/addcustomer")
+    @ResponseBody
+    public String addCustomer(Customer customer){
+        String isAdd = null;
+        if(customerService.addCustomer(customer) == 1){
+            isAdd = "添加成功";
+        }
+        return isAdd;
+    }
 }

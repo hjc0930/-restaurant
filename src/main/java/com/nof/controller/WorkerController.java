@@ -7,13 +7,12 @@ import com.nof.service.WorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
+import javax.sound.midi.Soundbank;
 import java.util.List;
-import java.util.Map;
+
 
 @Controller
 public class WorkerController {
@@ -45,5 +44,26 @@ public class WorkerController {
             isAdd = "添加成功";
         }
         return isAdd;
+    }
+
+    @RequestMapping("/deleteworker")
+    @ResponseBody
+    public String deleteWorker(Integer workerId){
+        String isDelete = null;
+
+        if(workerService.deleteWorker(workerId) == 1){
+            isDelete = "删除成功";
+        }
+        return isDelete;
+    }
+
+    @RequestMapping("/updateworker")
+    @ResponseBody
+    public String updateWorker(Worker worker){
+        String isUpdate = null;
+        if(workerService.updateWorker(worker) == 1){
+            isUpdate = "修改成功";
+        }
+        return isUpdate;
     }
 }

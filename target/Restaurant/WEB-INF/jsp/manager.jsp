@@ -73,7 +73,8 @@
             getInfo();
             //信息添加
             addInfo();
-
+            //功能模块
+            operatorInfo();
         })
         //选项卡
         function Tab(node){
@@ -119,8 +120,8 @@
                             <td>${"${workerInfo[i].w_pwd}"}</td>
                             <td>${"${workerInfo[i].workerGender}"}</td>
                             <td>
-                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
-                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="删除" id="deleteworker"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updateworker" data-toggle="modal" data-target="#updateWorker"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                     }
@@ -141,8 +142,8 @@
                             <td>${"${foodListInfo[i].foodClass}"}</td>
                             <td>${"${foodListInfo[i].foodPrice}"}</td>
                             <td>
-                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
-                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="删除" id="deletefoodlist"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updatefoodlist" data-toggle="modal" data-target="#updateFoodList"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                     }
@@ -164,8 +165,8 @@
                             <td>${"${bizListInfo[i].customName}"}</td>
                             <td>${"${bizListInfo[i].sal}"}</td>
                             <td>
-                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
-                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="删除" id="deletebizlist"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updatebizlist"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                     }
@@ -312,6 +313,156 @@
                 })
             })
         }
+        //功能模块
+        function operatorInfo(){
+            //删除员工
+            $("#worker").on("click","#deleteworker",function () {
+                var _this = this;
+                $.post({
+                    url:("${pageContext.request.contextPath}/deleteworker"),
+                    data:{
+                        //获取员工Id传回
+                        workerId: $(_this).parent().prevAll().eq(4).html()
+                    },
+                    success:function (data){
+                        if(data != null){
+                            alert(data);
+                            $(_this).parent().parent().remove();
+                        }else{
+                            alert("删除失败，请重试");
+                        }
+                    }
+                })
+                //阻止事件默认行为
+                return false;
+            })
+            //修改员工信息
+            $("#worker").on("click","#updateworker",function () {
+                var _this = this;
+                $("#updateWorkerId").val($(_this).parent().prevAll().eq(4).html());
+                $("#updateWorkerNumber").val($(_this).parent().prevAll().eq(3).html());
+                $("#updateWorkerName").val($(_this).parent().prevAll().eq(2).html());
+                $("#updateWorkerPassword").val($(_this).parent().prevAll().eq(1).html());
+                $("#updateWorkerGender").val($(_this).parent().prevAll().eq(0).html());
+
+                $("#updateWorkerBtn").click(function () {
+                    $.post({
+                        url:("${pageContext.request.contextPath}/updateworker"),
+                        data:{
+                            workerId: $("#updateWorkerId").val(),
+                            W_number: $("#updateWorkerNumber").val(),
+                            W_name: $("#updateWorkerName").val(),
+                            W_pwd: $("#updateWorkerPassword").val(),
+                            workerGender: $("#updateWorkerGender").val()
+                        },
+                        success:function (data) {
+                            if(data != null){
+                                alert(data);
+                                //修改成功后关闭模态框
+                                $("#updateWorker").modal('hide');
+                                //重新获取数据
+                                $("#worker").html("");
+                                $.post({
+                                    url: ("${pageContext.request.contextPath}/getworker"),
+                                    success:function (data) {
+                                        var workerInfo = JSON.parse(data);
+                                        var str = ``;
+                                        for(var i = 0; i< workerInfo.length; i++){
+                                            str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${workerInfo[i].workerId}"}</td>
+                            <td>${"${workerInfo[i].w_number}"}</td>
+                            <td>${"${workerInfo[i].w_name}"}</td>
+                            <td>${"${workerInfo[i].w_pwd}"}</td>
+                            <td>${"${workerInfo[i].workerGender}"}</td>
+                            <td>
+                                <a href="#" title="删除" id="deleteworker"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updateworker"  data-toggle="modal" data-target="#updateWorker"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                        }
+                                        $("#worker").html(str);
+                                    }
+                                });
+                            }else{
+                                alert("修改失败，请重试")
+                            }
+                        }
+                    })
+                })
+            })
+
+            //删除菜谱
+            $("#foodlist").on("click","#deletefoodlist",function () {
+                var _this = this;
+                $.post({
+                    url:("${pageContext.request.contextPath}/deletefoodlist"),
+                    data:{
+                        //获取员工Id传回
+                        foodId: $(_this).parent().prevAll().eq(3).html()
+                    },
+                    success:function (data){
+                        if(data != null){
+                            alert(data);
+                            $(_this).parent().parent().remove();
+                        }else{
+                            alert("删除失败，请重试");
+                        }
+                    }
+                })
+                //阻止事件默认行为
+                return false;
+            })
+            //修改菜谱
+            $("#foodlist").on("click","#updatefoodlist",function () {
+                var _this = this;
+                $("#updateFoodListId").val($(_this).parent().prevAll().eq(3).html());
+                $("#updateFoodListName").val($(_this).parent().prevAll().eq(2).html());
+                $("#updateFoodListClass").val($(_this).parent().prevAll().eq(1).html());
+                $("#updateFoodListPrice").val($(_this).parent().prevAll().eq(0).html());
+                $("#updateFoodListBtn").click(function () {
+                    $.post({
+                        url:("${pageContext.request.contextPath}/updatefoodlist"),
+                        data:{
+                            foodId: $("#updateFoodListId").val(),
+                            foodName: $("#updateFoodListName").val(),
+                            foodClass: $("#updateFoodListClass").val(),
+                            foodPrice: $("#updateFoodListPrice").val()
+                        },
+                        success:function (data) {
+                            if(data != null){
+                                alert(data);
+                                //修改成功后关闭模态框
+                                $("#updateFoodList").modal('hide');
+                                //重新获取数据
+                                $("#foodlist").html("");
+                                $.post({
+                                    url:("${pageContext.request.contextPath}/getfoodlist"),
+                                    success: function (data) {
+                                        var foodListInfo = JSON.parse(data);
+                                        var str = ``;
+                                        for(var i = 0; i < foodListInfo.length; i++){
+                                            str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${foodListInfo[i].foodId}"}</td>
+                            <td>${"${foodListInfo[i].foodName}"}</td>
+                            <td>${"${foodListInfo[i].foodClass}"}</td>
+                            <td>${"${foodListInfo[i].foodPrice}"}</td>
+                            <td>
+                                <a href="#" title="删除" id="deletefoodlist"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updatefoodlist" data-toggle="modal" data-target="#updateFoodList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                        }
+                                        $("#foodlist").html(str);
+                                    }
+                                })
+                            }
+                        }
+                    })
+                })
+            })
+        }
     </script>
 </head>
 <body>
@@ -357,14 +508,14 @@
 <main id="main">
     <section class="main_contaiter">
         <section id="projectList">
-
+            <%--员工信息--%>
             <div class="projectList_cons clear" style="display: block">
                 <div class="show clear">
                     <!-- 按钮触发模态框 -->
                     <button id="addWorkerTarget" class="btn btn-primary" data-toggle="modal" data-target="#addWorker">
                         添加员工
                     </button>
-                    <!-- 模态框（Modal） -->
+                    <!-- 添加功能模态框（Modal） -->
                     <div class="modal fade" id="addWorker" tabindex="-1" role="dialog" aria-labelledby="workerModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -407,6 +558,53 @@
                         </div><!-- /.modal -->
                     </div>
 
+                    <!-- 修改功能模态框（Modal） -->
+                    <div class="modal fade" id="updateWorker" tabindex="-1" role="dialog" aria-labelledby="workerUpdate" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="workerUpdate">
+                                        修改
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="updateWorkerId">员工Id</label>
+                                            <input type="text" class="form-control" id="updateWorkerId" placeholder="员工Id" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateWorkerNumber">员工编号</label>
+                                            <input type="text" class="form-control" id="updateWorkerNumber" placeholder="员工编号" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateWorkerName">员工姓名</label>
+                                            <input type="text" class="form-control" id="updateWorkerName" placeholder="员工姓名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateWorkerPassword">员工密码</label>
+                                            <input type="text" class="form-control" id="updateWorkerPassword" placeholder="员工密码">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateWorkerGender">员工性别</label>
+                                            <input type="text" class="form-control" id="updateWorkerGender" placeholder="员工性别">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="updateWorkerBtn" type="button" class="btn btn-primary">
+                                        修改
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
                     <table class="zl_table">
                         <thead>
                         <tr>
@@ -423,14 +621,14 @@
                     </table>
                 </div>
             </div>
-
+            <%--菜谱管理--%>
             <div class="projectList_cons clear">
                 <div class="show clear">
                     <!-- 按钮触发模态框 -->
                     <button class="btn btn-primary" data-toggle="modal" data-target="#addFoodList">
                         添加菜谱
                     </button>
-                    <!-- 模态框（Modal） -->
+                    <!-- 添加功能模态框（Modal） -->
                     <div class="modal fade" id="addFoodList" tabindex="-1" role="dialog" aria-labelledby="foodListModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -468,6 +666,48 @@
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal -->
                     </div>
+                    <%--修改功能模态框--%>
+                    <div class="modal fade" id="updateFoodList" tabindex="-1" role="dialog" aria-labelledby="updatefoodListModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="updatefoodListModalLabel">
+                                        修改
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="updateFoodListId">菜谱Id</label>
+                                            <input type="text" class="form-control" id="updateFoodListId" placeholder="菜谱Id" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateFoodListName">菜名</label>
+                                            <input type="text" class="form-control" id="updateFoodListName" placeholder="菜名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateFoodListClass">菜类型</label>
+                                            <input type="text" class="form-control" id="updateFoodListClass" placeholder="菜类型">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateFoodListPrice">价格</label>
+                                            <input type="text" class="form-control" id="updateFoodListPrice" placeholder="价格">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="updateFoodListBtn" type="button" class="btn btn-primary">
+                                        修改
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
 
                     <table class="zl_table">
                         <thead>
@@ -484,7 +724,7 @@
                     </table>
                 </div>
             </div>
-
+            <%--营业查询--%>
             <div class="projectList_cons clear">
                 <div class="show clear">
                     <!-- 按钮触发模态框 -->

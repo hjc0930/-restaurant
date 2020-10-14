@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>前台</title>
     <script src="${pageContext.request.contextPath}/statics/js/jquery-3.5.1.js"></script>
+    <script src="${pageContext.request.contextPath}/statics/js/bootstrap.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/css/common.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/iconfont/iconfont.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/statics/css/bootstrap.css">
@@ -71,6 +72,8 @@
             getName();
             //获取信息
             getInfo();
+            //添加信息
+            addInfo();
         });
         //选项卡
         function Tab(node){
@@ -96,6 +99,7 @@
                 }
             })
         }
+        //获取信息
         function getInfo() {
             //顾客信息
             $.post({
@@ -167,6 +171,52 @@
                 }
             });
         }
+        //添加信息
+        function addInfo() {
+            $("#addCustomertBtn").click(function () {
+                $.post({
+                    url:("${pageContext.request.contextPath}/addcustomer"),
+                    data:{
+                        customName: $("#customName").val(),
+                        customTel: $("#customTel").val(),
+                        custGender: $("#custGender").val()
+                    },
+                    success:function (data) {
+                        if(data != null){
+                            alert(data);
+                            //添加成功后关闭模态框
+                            $("#addCustomer").modal('hide');
+                            $("#customName").val("");
+                            $("#customTel").val("");
+                            $("#custGender").val("");
+                            //重新获取信息
+                            $("#customer").html("");
+                            $.post({
+                                url: ("${pageContext.request.contextPath}/getcustomer"),
+                                success: function (data) {
+                                    var customerInfo = JSON.parse(data);
+                                    var str =``;
+                                    for (var i = 0; i < customerInfo.length; i++){
+                                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${customerInfo[i].custId}"}</td>
+                            <td>${"${customerInfo[i].customName}"}</td>
+                            <td>${"${customerInfo[i].customTel}"}</td>
+                            <td>${"${customerInfo[i].custGender}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                    }
+                                    $("#customer").html(str);
+                                }
+                            });
+                        }
+                    }
+                })
+            })
+        }
     </script>
 </head>
 <body>
@@ -211,11 +261,50 @@
 <main id="main">
     <section class="main_contaiter">
         <section id="projectList">
-
+            <%--顾客信息管理--%>
             <div class="projectList_cons" style="display: block">
                 <div class="show clear">
-                    <div class="zl_search r">
-                        <input type="text" placeholder="请输入关键字"><button class="iconfont iconMagnifier"></button>
+                    <!-- 按钮触发模态框 -->
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addCustomer">
+                        添加顾客
+                    </button>
+                    <!-- 添加功能模态框（Modal） -->
+                    <div class="modal fade" id="addCustomer" tabindex="-1" role="dialog" aria-labelledby="customerNameModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="customerNameModalLabel">
+                                        顾客信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="customName">顾客姓名</label>
+                                            <input type="text" class="form-control" id="customName" placeholder="顾客姓名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="customTel">电话</label>
+                                            <input type="text" class="form-control" id="customTel" placeholder="电话">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="custGender">性别</label>
+                                            <input type="text" class="form-control" id="custGender" placeholder="性别">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="addCustomertBtn" type="button" class="btn btn-primary">
+                                        添加
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
                     </div>
                     <table class="zl_table">
                         <thead>
@@ -232,12 +321,10 @@
                     </table>
                 </div>
             </div>
-
+            <%--订座管理--%>
             <div class="projectList_cons">
                 <div class="show clear">
-                    <div class="zl_search r">
-                        <input type="text" placeholder="请输入关键字"><button class="iconfont iconMagnifier"></button>
-                    </div>
+
                     <table class="zl_table">
                         <thead>
                         <tr>
@@ -253,12 +340,10 @@
                     </table>
                 </div>
             </div>
-
+            <%--订单管理--%>
             <div class="projectList_cons">
                 <div class="show clear">
-                    <div class="zl_search r">
-                        <input type="text" placeholder="请输入关键字"><button class="iconfont iconMagnifier"></button>
-                    </div>
+
                     <table class="zl_table">
                         <thead>
                         <tr>

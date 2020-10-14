@@ -3,6 +3,7 @@ package com.nof.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nof.pojo.Foodlist;
+import com.nof.pojo.Worker;
 import com.nof.service.FoodlistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,6 +37,25 @@ public class FoodlistController {
             isAdd = "添加成功!";
         }
         return isAdd;
+    }
 
+    @RequestMapping("/deletefoodlist")
+    @ResponseBody
+    public String deleteFoodList(Integer foodId){
+        String isDelete = null;
+        if(foodlistService.deleteFoodlist(foodId) == 1){
+            isDelete = "删除成功";
+        }
+        return isDelete;
+    }
+
+    @RequestMapping("/updatefoodlist")
+    @ResponseBody
+    public String updateWorker(Foodlist foodlist){
+        String isUpdate = null;
+        if(foodlistService.updateFoodlist(foodlist) == 1){
+            isUpdate = "修改成功";
+        }
+        return isUpdate;
     }
 }

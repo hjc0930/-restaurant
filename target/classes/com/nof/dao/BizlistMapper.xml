@@ -7,7 +7,7 @@
         insert into restaurantdb.bizlist(deskId,customName,sal)
         value(#{deskId},#{customName},#{sal})
     </insert>
-    
+
     <delete id="deleteBizlist" parameterType="int">
         delete from restaurantdb.bizlist where bizlistId=#{bizlistId}
     </delete>
