@@ -26,4 +26,41 @@ public class DesklistController {
 
         return mapper.writeValueAsString(desklists);
     }
+
+    @ResponseBody
+    @RequestMapping("/adddesklist")
+    public String addDeskList(Desklist desklist){
+        String addDeskList = null;
+        if(desklistService.addDesklist(desklist) == 1){
+            addDeskList = "添加成功";
+        }
+        return addDeskList;
+    }
+
+    @RequestMapping("/deletedesklist")
+    @ResponseBody
+    public String deleteDeskList(int deskId){
+        String isDelete = null;
+        Desklist desklist = desklistService.queryDesklistById(deskId);
+
+        if(desklist.getDeskState().equals("1")){
+            isDelete = "2";
+        }else if(desklistService.deleteDesklist(deskId) == 1){
+            isDelete = "1";
+        }
+        return isDelete;
+    }
+
+    @RequestMapping("/updatedesklist")
+    @ResponseBody
+    public String updateDeskList(Desklist desklist){
+        String isUpdate = null;
+        Desklist desklist1 = desklistService.queryDesklistById(desklist.getDeskId());
+        if(desklist1.getCustomName() != null){
+            isUpdate = "2";
+        }else if(desklistService.updateDesklist(desklist) == 1){
+            isUpdate = "1";
+        }
+        return isUpdate;
+    }
 }

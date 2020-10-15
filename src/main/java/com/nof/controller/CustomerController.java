@@ -35,4 +35,24 @@ public class CustomerController {
         }
         return isAdd;
     }
+
+    @RequestMapping("/deletecustomer")
+    @ResponseBody
+    public String deleteCustomer(int custId){
+        String isDelete = null;
+        if(customerService.deleteCustomer(custId) == 1){
+            isDelete = "删除成功";
+        }
+        return isDelete;
+    }
+
+    @RequestMapping("/updatecustomer")
+    @ResponseBody
+    public String updateCustomer(Customer customer){
+        String isUpdate = null;
+        if(customerService.updateCustomer(customer) == 1){
+            isUpdate = "修改成功";
+        }
+        return isUpdate;
+    }
 }

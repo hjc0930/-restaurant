@@ -24,7 +24,6 @@
         #projectList .projectList_btns li.active{color: white; background: #018ffb; position: relative;}
         #projectList .projectList_btns li.active:after{content: ""; display: block; width: 16px;height: 6px; position: absolute;bottom: -6px; left: 50%; margin-left: -8px;}
 
-        /* #projectList .projectList_cons{} */
         #projectList .projectList_cons > div{display: none;}
         #projectList .projectList_cons > div.show{display: block;}
 
@@ -46,6 +45,8 @@
         #projectList .zl_table th , #projectList .zl_table td:first-child{text-align: center; text-indent: 0;}
         #projectList .zl_table td{ text-indent: 12px;}
         #projectList .zl_table td:nth-child(3) , #projectList .zl_table td:nth-child(4) , #projectList .zl_table td:nth-child(5){text-indent: 0; text-align: center;}
+        #projectList .zl_table .iconword{margin-right: 13px; color: #0173ca;}
+        #projectList .zl_table .iconxiazai{color: #3da2f0;}
         #projectList .zl_table .iconshanchu{color: #d94141;}
 
         #projectList .zl_footer{height: 70px; border: solid 1px #dbe7ed; border-top: none; margin-top: 20px; overflow: hidden;}
@@ -54,6 +55,7 @@
         #projectList .zl_page{line-height: 24px; margin: 22px 18px 0 0; font-size: 0;}
         #projectList .zl_page a{font-size: 12px; color: #333333; border: solid 1px #e6e6e6; padding: 6px 9px; margin-left: 10px;}
         #projectList .zl_page a.active{border: solid 1px #3797e0; background: #42adff; color: white;}
+
         .zl_table tbody tr{text-align: center;line-height: 32px;}
         .zl_table tbody td{border-right: solid 1px #dbe7ed;}
         .zl_table tbody td:nth-of-type(6){padding-right: 10px; box-sizing: border-box;}
@@ -62,6 +64,7 @@
         .zl_table tbody td a{color: black;}
         .zl_table tbody td a span{font-size: 14px;}
         .zl_table tbody td a span:hover{color: red; text-decoration: underline;}
+        #menu ul li a:focus,#menu ul li a:hover{text-decoration: none}
     </style>
     <script>
         $(function () {
@@ -71,7 +74,7 @@
             getName();
             //信息读取
             getInfo();
-            //信息添加
+            //添加信息
             addInfo();
             //功能模块
             operatorInfo();
@@ -149,8 +152,27 @@
                     }
                     $("#foodlist").html(str);
                 }
-            })
-
+            });
+            /*获得座位信息*/
+            $.post({
+                url:("${pageContext.request.contextPath}/getdesklist"),
+                success: function (data) {
+                    var deskListInfo = JSON.parse(data);
+                    var str = ``;
+                    for (var i = 0; i < deskListInfo.length; i++){
+                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${deskListInfo[i].deskId}"}</td>
+                            <td>${"${deskListInfo[i].deskState}"}</td>
+                            <td>
+                                <a href="#" title="删除" id="deleteDeskList"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updateDesklist"  data-toggle="modal" data-target="#updateDesklist"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                    }
+                    $("#desklist").html(str);
+                }
+            });
             /*获得总营业信息*/
             $.post({
                 url:("${pageContext.request.contextPath}/getbizlist"),
@@ -269,6 +291,43 @@
                 });
             })
 
+            //添加座位
+            $("#addDeskListBtn").click(function () {
+                $.post({
+                    url:("${pageContext.request.contextPath}/adddesklist"),
+                    data:{
+                        deskState : $("#deskListState").val()
+                    },
+                    success:function (data) {
+                        if(data != null){
+                            alert(data);
+                            //添加成功后关闭模态框
+                            $("#addDesklist").modal('hide');
+                            //重新获取座位信息
+                            $("#desklist").html("");
+                            $.post({
+                                url:("${pageContext.request.contextPath}/getdesklist"),
+                                success: function (data) {
+                                    var deskListInfo = JSON.parse(data);
+                                    var str = ``;
+                                    for (var i = 0; i < deskListInfo.length; i++){
+                                        str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${deskListInfo[i].deskId}"}</td>
+                            <td>${"${deskListInfo[i].deskState}"}</td>
+                            <td>
+                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                    }
+                                    $("#desklist").html(str);
+                                }
+                            });
+                        }
+                    }
+                })
+            })
             //添加营业信息
             $("#addBizListBtn").click(function () {
                 $.post({
@@ -313,7 +372,7 @@
                 })
             })
         }
-        //功能模块
+        //删除修改功能模块
         function operatorInfo(){
             //删除员工
             $("#worker").on("click","#deleteworker",function () {
@@ -345,7 +404,7 @@
                 $("#updateWorkerPassword").val($(_this).parent().prevAll().eq(1).html());
                 $("#updateWorkerGender").val($(_this).parent().prevAll().eq(0).html());
 
-                $("#updateWorkerBtn").click(function () {
+                $("#updateWorkerBtn").unbind("click").bind("click",function () {
                     $.post({
                         url:("${pageContext.request.contextPath}/updateworker"),
                         data:{
@@ -420,7 +479,7 @@
                 $("#updateFoodListName").val($(_this).parent().prevAll().eq(2).html());
                 $("#updateFoodListClass").val($(_this).parent().prevAll().eq(1).html());
                 $("#updateFoodListPrice").val($(_this).parent().prevAll().eq(0).html());
-                $("#updateFoodListBtn").click(function () {
+                $("#updateFoodListBtn").unbind("click").bind("click",function () {
                     $.post({
                         url:("${pageContext.request.contextPath}/updatefoodlist"),
                         data:{
@@ -462,6 +521,75 @@
                     })
                 })
             })
+
+            //删除座位
+            $("#desklist").on("click","#deleteDeskList",function () {
+                var _this = this;
+                $.post({
+                    url:("${pageContext.request.contextPath}/deletedesklist"),
+                    data:{
+                        deskId: $(_this).parent().prevAll().eq(1).html()
+                    },
+                    success:function (data){
+                        if(data == "1"){
+                            $(_this).parent().parent().remove();
+                        }else if(data == "2"){
+                            alert("无法删除，该座位已被预订");
+                        }else{
+                            alert("删除失败");
+                        }
+                    }
+                })
+                return false;
+            })
+            //修改座位
+            $("#desklist").on("click","#updateDesklist",function () {
+                var _this = this;
+
+                $("#updateDeskListId").val($(_this).parent().prevAll().eq(1).html());
+                $("#updateDeskListState").val($(_this).parent().prevAll().eq(0).html());
+                $("#updateDeskListBtn").unbind("click").bind("click",function () {
+                    $.post({
+                        url:("${pageContext.request.contextPath}/updatedesklist"),
+                        data:{
+                            deskId: $("#updateDeskListId").val(),
+                            deskState: $("#updateDeskListState").val()
+                        },
+                        success:function (data) {
+                            if(data == "1"){
+                                alert("修改成功");
+                                //修改成功后关闭模态框
+                                $("#updateDesklist").modal('hide');
+                                //重新获取信息
+                                $("#desklist").html("");
+                                $.post({
+                                    url:("${pageContext.request.contextPath}/getdesklist"),
+                                    success: function (data) {
+                                        var deskListInfo = JSON.parse(data);
+                                        var str = ``;
+                                        for (var i = 0; i < deskListInfo.length; i++){
+                                            str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${deskListInfo[i].deskId}"}</td>
+                            <td>${"${deskListInfo[i].deskState}"}</td>
+                            <td>
+                                <a href="#" title="删除" id="deleteDeskList"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updateDesklist"  data-toggle="modal" data-target="#updateDesklist"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                        }
+                                        $("#desklist").html(str);
+                                    }
+                                });
+                            }else if(data == "2"){
+                                alert("无法修改，该座位已被预订");
+                            }else{
+                                alert("修改失败");
+                            }
+                        }
+                    })
+                })
+            })
         }
     </script>
 </head>
@@ -494,6 +622,12 @@
             <a href="#">
                 <i class="iconfont iconcaipu"></i>
                 <p>菜谱管理</p>
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="iconfont iconketingcanzhuo"></i>
+                <p>座位管理</p>
             </a>
         </li>
         <li>
@@ -724,6 +858,92 @@
                     </table>
                 </div>
             </div>
+            <%--座位管理--%>
+            <div class="projectList_cons">
+                <div class="show clear">
+                    <!-- 按钮触发模态框 -->
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addDesklist">
+                        添加座位
+                    </button>
+                    <!-- 添加功能模态框（Modal） -->
+                    <div class="modal fade" id="addDesklist" tabindex="-1" role="dialog" aria-labelledby="deskListModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="deskListModalLabel">
+                                        座位信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="deskListState">座位状态</label>
+                                            <input type="text" class="form-control" id="deskListState" placeholder="座位状态" value="0">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="addDeskListBtn" type="button" class="btn btn-primary">
+                                        添加
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+                    <!-- 修改功能模态框（Modal） -->
+                    <div class="modal fade" id="updateDesklist" tabindex="-1" role="dialog" aria-labelledby="updateDeskListModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="updateDeskListModalLabel">
+                                        座位信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="updateDeskListId">座位Id</label>
+                                            <input type="text" class="form-control" id="updateDeskListId" placeholder="座位Id" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateDeskListState">座位状态</label>
+                                            <input type="text" class="form-control" id="updateDeskListState" placeholder="座位状态">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="updateDeskListBtn" type="button" class="btn btn-primary">
+                                        修改
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+                    <table class="zl_table">
+                        <thead>
+                        <tr>
+                            <th width="49px"><input type="checkbox"></th>
+                            <th>座位Id</th>
+                            <th width="167px">座位状态</th>
+                            <th width="168px">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="desklist"></tbody>
+                    </table>
+                    </div>
+                </div>
             <%--营业查询--%>
             <div class="projectList_cons clear">
                 <div class="show clear">

@@ -55,6 +55,7 @@
         #projectList .zl_page{line-height: 24px; margin: 22px 18px 0 0; font-size: 0;}
         #projectList .zl_page a{font-size: 12px; color: #333333; border: solid 1px #e6e6e6; padding: 6px 9px; margin-left: 10px;}
         #projectList .zl_page a.active{border: solid 1px #3797e0; background: #42adff; color: white;}
+
         .zl_table tbody tr{text-align: center;line-height: 32px;}
         .zl_table tbody td{border-right: solid 1px #dbe7ed;}
         .zl_table tbody td:nth-of-type(6){padding-right: 10px; box-sizing: border-box;}
@@ -63,6 +64,7 @@
         .zl_table tbody td a{color: black;}
         .zl_table tbody td a span{font-size: 14px;}
         .zl_table tbody td a span:hover{color: red; text-decoration: underline;}
+        #menu ul li a:focus,#menu ul li a:hover{text-decoration: none}
     </style>
     <script>
         $(function () {
@@ -74,6 +76,8 @@
             getInfo();
             //添加信息
             addInfo();
+            //删除修改模块
+            operatorInfo();
         });
         //选项卡
         function Tab(node){
@@ -115,8 +119,8 @@
                             <td>${"${customerInfo[i].customTel}"}</td>
                             <td>${"${customerInfo[i].custGender}"}</td>
                             <td>
-                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
-                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="删除" id="deletecustomer"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updatecustomer"  data-toggle="modal" data-target="#updateCustomer"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                     }
@@ -137,8 +141,8 @@
                             <td>${"${deskListInfo[i].customName}"}</td>
                             <td>${"${deskListInfo[i].bookNumber}"}</td>
                             <td>
-                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
-                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                     }
@@ -161,8 +165,8 @@
                             <td>${"${orderDishInfo[i].foodPrice}"}</td>
                             <td>${"${orderDishInfo[i].deskId}"}</td>
                             <td>
-                                <a href="" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
-                                <a href="" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
                           
                             </td>
                         </tr>`;
@@ -186,9 +190,10 @@
                             alert(data);
                             //添加成功后关闭模态框
                             $("#addCustomer").modal('hide');
+                            //清空输入栏
                             $("#customName").val("");
                             $("#customTel").val("");
-                            $("#custGender").val("")
+                            $("#custGender").val("");
                             //重新获取信息
                             $("#customer").html("");
                             $.post({
@@ -214,6 +219,79 @@
                             });
                         }
                     }
+                })
+            })
+        }
+        //删除修改模块
+        function operatorInfo() {
+            //删除
+            $("#customer").on("click","#deletecustomer",function () {
+                var _this = this;
+                $.post({
+                    url:("${pageContext.request.contextPath}/deletecustomer"),
+                    data:{
+                        custId: $(_this).parent().prevAll().eq(3).html()
+                    },
+                    success:function (data) {
+                        if(data != null){
+                            alert(data);
+                            $(_this).parent().parent().remove();
+                        }else{
+                            alert("删除失败，请重试");
+                        }
+                    }
+                })
+                return false;
+            })
+            //修改
+            $("#customer").on("click","#updatecustomer",function () {
+                var _this = this;
+                //将原信息显示在修改栏中
+                $("#updatecustomId").val($(this).parent().prevAll().eq(3).html())
+                $("#updatecustomName").val($(this).parent().prevAll().eq(2).html());
+                $("#updatecustomTel").val($(this).parent().prevAll().eq(1).html());
+                $("#updatecustGender").val($(this).parent().prevAll().eq(0).html());
+
+                $("#updateCustomertBtn").unbind("click").bind("click",function () {
+                    $.post({
+                        url:("${pageContext.request.contextPath}/updatecustomer"),
+                        data:{
+                            custId:  $("#updatecustomId").val(),
+                            customName: $("#updatecustomName").val(),
+                            customTel: $("#updatecustomTel").val(),
+                            custGender: $("#updatecustGender").val()
+                        },
+                        success:function (data) {
+                            if(data != null){
+                                alert(data);
+                                //修改成功后关闭模态框
+                                $("#updateCustomer").modal('hide');
+                                //重新获取数据
+                                $("#customer").html("");
+                                $.post({
+                                    url: ("${pageContext.request.contextPath}/getcustomer"),
+                                    success: function (data) {
+                                        var customerInfo = JSON.parse(data);
+                                        var str =``;
+                                        for (var i = 0; i < customerInfo.length; i++){
+                                            str +=`<tr>
+                                                    <td width="49px"><input type="checkbox"></td>
+                                                    <td>${"${customerInfo[i].custId}"}</td>
+                                                    <td>${"${customerInfo[i].customName}"}</td>
+                                                    <td>${"${customerInfo[i].customTel}"}</td>
+                                                    <td>${"${customerInfo[i].custGender}"}</td>
+                                                    <td>
+                                                        <a href="#" title="删除" id="deletecustomer"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                                        <a href="#" title="修改" id="updatecustomer"  data-toggle="modal" data-target="#updateCustomer"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                                    </td>
+                                                </tr>`;
+                                        }
+                                        $("#customer").html(str);
+                                    }
+                                });
+                            }
+                        }
+                    })
                 })
             })
         }
@@ -287,8 +365,8 @@
                                             <input type="text" class="form-control" id="customName" placeholder="顾客姓名">
                                         </div>
                                         <div class="form-group">
-                                            <label for="customTel">电话</label>
-                                            <input type="text" class="form-control" id="customTel" placeholder="电话">
+                                            <label for="customTel">联系电话</label>
+                                            <input type="text" class="form-control" id="customTel" placeholder="联系电话">
                                         </div>
                                         <div class="form-group">
                                             <label for="custGender">性别</label>
@@ -306,6 +384,49 @@
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal -->
                     </div>
+                    <!-- 修改功能模态框（Modal） -->
+                    <div class="modal fade" id="updateCustomer" tabindex="-1" role="dialog" aria-labelledby="updatecustomerModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="updatecustomerModalLabel">
+                                        修改顾客信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="updatecustomId">顾客Id</label>
+                                            <input type="text" class="form-control" id="updatecustomId" placeholder="顾客姓名" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updatecustomName">顾客姓名</label>
+                                            <input type="text" class="form-control" id="updatecustomName" placeholder="顾客姓名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updatecustomTel">联系电话</label>
+                                            <input type="text" class="form-control" id="updatecustomTel" placeholder="联系电话">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updatecustGender">性别</label>
+                                            <input type="text" class="form-control" id="updatecustGender" placeholder="性别">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="updateCustomertBtn" type="button" class="btn btn-primary">
+                                        修改
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
                     <table class="zl_table">
                         <thead>
                         <tr>

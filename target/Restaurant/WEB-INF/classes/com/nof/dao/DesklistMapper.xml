@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nof.dao.DesklistMapper">
     <insert id="addDesklist" parameterType="Desklist">
-        insert into restaurantdb.desklist(deskState,custName,bookNumber)
-        value(#{deskState},#{custName},#{bookNumber})
+        insert into restaurantdb.desklist(deskState,customName,bookNumber)
+        value(#{deskState},#{customName},#{bookNumber})
     </insert>
 
     <delete id="deleteDesklist" parameterType="int">
@@ -14,7 +14,7 @@
 
     <update id="updateDesklist" parameterType="Desklist">
         update restaurantdb.desklist
-        set deskState = #{deskState},custName = #{custName},bookNumber = #{bookNumber}
+        set deskState = #{deskState},customName = #{customName},bookNumber = #{bookNumber}
         where deskId = #{deskId}
     </update>
 

@@ -12,4 +12,6 @@ public class Desklist {
     private String deskState;
     private String customName;
     private int bookNumber;
+
+
 }
