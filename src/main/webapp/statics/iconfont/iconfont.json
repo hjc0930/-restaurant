@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "14745850",
+      "name": "退订",
+      "font_class": "tuiding",
+      "unicode": "e6a1",
+      "unicode_decimal": 59041
+    },
+    {
       "icon_id": "5124856",
       "name": "客厅餐桌",
       "font_class": "ketingcanzhuo",

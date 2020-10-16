@@ -64,7 +64,9 @@
         .zl_table tbody td a{color: black;}
         .zl_table tbody td a span{font-size: 14px;}
         .zl_table tbody td a span:hover{color: red; text-decoration: underline;}
-        #menu ul li a:focus,#menu ul li a:hover{text-decoration: none}
+        /*去除bootstrap带来的下划线*/
+        #menu ul li a:focus,#menu ul li a:hover{text-decoration: none;}
+        .zl_table tbody td a:focus,.zl_table tbody td a:hover{text-decoration: none;}
     </style>
     <script>
         $(function () {

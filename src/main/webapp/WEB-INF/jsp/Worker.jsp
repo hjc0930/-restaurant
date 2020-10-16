@@ -62,9 +62,14 @@
         .zl_table tbody td:last-of-type{padding-right: 12px; box-sizing: border-box;}
         .zl_table tbody .iconbianji{font-size: 20px; position: relative; top: 3px;}
         .zl_table tbody td a{color: black;}
+
+        .zl_table tbody td a:first-of-type i{color: red; font-size: 16px}
         .zl_table tbody td a span{font-size: 14px;}
-        .zl_table tbody td a span:hover{color: red; text-decoration: underline;}
-        #menu ul li a:focus,#menu ul li a:hover{text-decoration: none}
+        .zl_table tbody td a span:hover{color: red;}
+
+        /*去除bootstrap带来的下划线*/
+        #menu ul li a:focus,#menu ul li a:hover{text-decoration: none;}
+        .zl_table tbody td a:focus,.zl_table tbody td a:hover{text-decoration: none;}
     </style>
     <script>
         $(function () {
@@ -88,7 +93,7 @@
                 $(".projectList_cons").eq($(this).index()).css("display","block");
             });
         }
-        //获得管理员姓名并显示
+        //获得员工姓名并显示
         function getName() {
             /*?username=xxx*/
             var str = location.search;
@@ -141,8 +146,8 @@
                             <td>${"${deskListInfo[i].customName}"}</td>
                             <td>${"${deskListInfo[i].bookNumber}"}</td>
                             <td>
-                                <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
-                                <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" class="updateDeskList"  data-toggle="modal" data-target="#updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                     }
@@ -177,6 +182,7 @@
         }
         //添加信息
         function addInfo() {
+            //添加顾客
             $("#addCustomertBtn").click(function () {
                 $.post({
                     url:("${pageContext.request.contextPath}/addcustomer"),
@@ -220,6 +226,113 @@
                         }
                     }
                 })
+            })
+
+            //订座模块
+            //将状态为0的座位添加到订座信息上
+            $("#tableReservation").click(function () {
+                var str = ``;
+                $("#deskStateList").html("");
+                for (var i = 0; i <$("#desklist tr").length; i++){
+                    if($("#desklist tr").eq(i).find("td").eq(2).html() == 0){
+                        var id = $("#desklist tr").eq(i).find("td").eq(1).html();
+                        str += `<li><a href="#">${"${id}"}</a></li>`;
+                    }
+                }
+                $("#deskStateList").html(str);
+                $("#deskListId .text").html("请选择");
+                $("#dcustGender .text").html("请选择");
+            })
+
+            //下拉菜单
+            $("#deskStateList").on("click","li",function () {
+                $("#deskListId .text").html("");
+                $("#deskListId .text").html($(this).text());
+            })
+            $("#custGenderList").on("click","li",function () {
+                $("#dcustGender .text").html("");
+                $("#dcustGender .text").html($(this).text());
+            })
+
+            //订座
+            $("#addDeskListBtn").unbind("click").bind("click",function () {
+                if($("#deskListId .text").html() == "请选择"){
+                    alert("请选择座位");
+                }else if(!$("#dcustomName").val()){
+                    alert("请输入顾客姓名");
+                }else if(!$("#dcustomTel").val()){
+                    alert("请输入联系电话");
+                }else if(!$("#bookNumber").val()){
+                    alert("请输入预订人数");
+                }else if(!$("#dcustGender .text").html() == "请选择"){
+                    alert("请选择顾客性别");
+                }else {
+                    $.post({
+                        url:"${pageContext.request.contextPath}/updateadd",
+                        data:{
+                            deskId:$("#deskListId .text").html(),
+                            customName:$("#dcustomName").val(),
+                            customTel:$("#dcustomTel").val(),
+                            custGender:$("#dcustGender .text").html(),
+                            bookNumber:$("#bookNumber").val()
+                        },
+                        success:function (data) {
+                            if(data != null){
+                                alert(data);
+                                //添加成功后关闭模态框
+                                $("#addDeskList").modal('hide');
+                                //重新订座获取信息
+                                $("#desklist").html("");
+                                $.post({
+                                    url:("${pageContext.request.contextPath}/getdesklist"),
+                                    success: function (data) {
+                                        var deskListInfo = JSON.parse(data);
+                                        var str = ``;
+                                        for (var i = 0; i < deskListInfo.length; i++){
+                                            str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${deskListInfo[i].deskId}"}</td>
+                            <td>${"${deskListInfo[i].deskState}"}</td>
+                            <td>${"${deskListInfo[i].customName}"}</td>
+                            <td>${"${deskListInfo[i].bookNumber}"}</td>
+                            <td>
+                                <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" class="updateDeskList"  data-toggle="modal" data-target="#updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                        }
+                                        $("#desklist").html(str);
+                                    }
+                                });
+                                //重新获取顾客信息
+                                $("#customer").html("");
+                                $.post({
+                                    url: ("${pageContext.request.contextPath}/getcustomer"),
+                                    success: function (data) {
+                                        var customerInfo = JSON.parse(data);
+                                        var str =``;
+                                        for (var i = 0; i < customerInfo.length; i++){
+                                            str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${customerInfo[i].custId}"}</td>
+                            <td>${"${customerInfo[i].customName}"}</td>
+                            <td>${"${customerInfo[i].customTel}"}</td>
+                            <td>${"${customerInfo[i].custGender}"}</td>
+                            <td>
+                                <a href="#" title="删除" id="deletecustomer"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updatecustomer"  data-toggle="modal" data-target="#updateCustomer"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                        }
+                                        $("#customer").html(str);
+                                    }
+                                });
+                            }else {
+                                alert("添加失败，请重试");
+                            }
+                        }
+                    })
+                }
             })
         }
         //删除修改模块
@@ -292,6 +405,202 @@
                             }
                         }
                     })
+                })
+            })
+
+            //退订功能
+            $("#desklist").on("click",".deleteDeskList",function () {
+                if($(this).parent().prevAll().eq(2).html() == "0"){
+                    alert("该座位没有被预订");
+                }else {
+                    $('#deleteDeskList').modal('show');
+                    $("#quitDeskId").val($(this).parent().prevAll().eq(3).html());
+                    $("#quitDcustomName").val($(this).parent().prevAll().eq(1).html());
+                    //获得顾客的联系信息
+                    var tel = "";
+                    var custId;
+                    for(var i = 0; i < $("#customer tr").length; i++){
+                        if($("#customer tr").eq(i).find("td").eq(2).html() == $(this).parent().prevAll().eq(1).html()){
+                            tel = $("#customer tr").eq(i).find("td").eq(3).html();
+                            custId = $("#customer tr").eq(i).find("td").eq(1).html();
+                            break;
+                        }
+                    }
+                    tel = tel.substring(0,3) + "****" + tel.substring(7);
+                    $("#quitDcustomTel").val(tel);
+                    $("#quitBookNumber").val($(this).parent().prevAll().eq(0).html());
+                    //确认退订按钮
+                    $("#deleteDeskListBtn").unbind("click").bind("click",function () {
+                        $.post({
+                            url:("${pageContext.request.contextPath}/quitdesklit"),
+                            data:{
+                                //将座位Id和顾客Id传回
+                                deskId: $("#quitDeskId").val(),
+                                custId: custId
+                            },
+                            success:function (data) {
+                                if(data != null){
+                                    alert(data);
+                                    //关闭模态框
+                                    $("#deleteDeskList").modal('hide');
+                                    //重新请求数据
+                                    //顾客信息
+                                    $("#customer").html("");
+                                    $.post({
+                                        url: ("${pageContext.request.contextPath}/getcustomer"),
+                                        success: function (data) {
+                                            var customerInfo = JSON.parse(data);
+                                            var str =``;
+                                            for (var i = 0; i < customerInfo.length; i++){
+                                                str +=`<tr>
+                                                <td width="49px"><input type="checkbox"></td>
+                                                <td>${"${customerInfo[i].custId}"}</td>
+                                                <td>${"${customerInfo[i].customName}"}</td>
+                                                <td>${"${customerInfo[i].customTel}"}</td>
+                                                <td>${"${customerInfo[i].custGender}"}</td>
+                                                <td>
+                                                    <a href="#" title="删除" id="deletecustomer"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                                    <a href="#" title="修改" id="updatecustomer"  data-toggle="modal" data-target="#updateCustomer"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                                </td>
+                                            </tr>`;
+                                            }
+                                            $("#customer").html(str);
+                                        }
+                                    });
+                                    //订座信息
+                                    $("#desklist").html("");
+                                    $.post({
+                                        url:("${pageContext.request.contextPath}/getdesklist"),
+                                        success: function (data) {
+                                            var deskListInfo = JSON.parse(data);
+                                            var str = ``;
+                                            for (var i = 0; i < deskListInfo.length; i++){
+                                                str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${deskListInfo[i].deskId}"}</td>
+                            <td>${"${deskListInfo[i].deskState}"}</td>
+                            <td>${"${deskListInfo[i].customName}"}</td>
+                            <td>${"${deskListInfo[i].bookNumber}"}</td>
+                            <td>
+                                <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" class="updateDeskList"  data-toggle="modal" data-target="#updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                            }
+                                            $("#desklist").html(str);
+                                        }
+                                    });
+                                }else {
+                                    alert("退订失败");
+                                }
+                            }
+                        })
+                    })
+                }
+            })
+            //修改订座功能
+            $("#desklist").on("click",".updateDeskList",function () {
+                var _this = this;
+                if($(this).parent().prevAll().eq(2).html() == "0"){
+                    alert("该座位没有被预订");
+                    $('#updateDeskList').modal('toggle');
+                }else {
+                    //座位Id
+                    $("#updateDeskId").val($(this).parent().prevAll().eq(3).html());
+                    //座位状态
+                    $("#updateDeskState").val($(this).parent().prevAll().eq(2).html());
+                    //顾客姓名
+                    $("#updateDcustomName").val($(this).parent().prevAll().eq(1).html());
+                    //获得顾客的联系电话
+                    var tel = "";
+                    for(var i = 0; i < $("#customer tr").length; i++){
+                        if($("#customer tr").eq(i).find("td").eq(2).html() == $(this).parent().prevAll().eq(1).html()){
+                            tel = $("#customer tr").eq(i).find("td").eq(3).html();
+                            break;
+                        }
+                    }
+                    //联系电话
+                    tel = tel.substring(0,3) + "****" + tel.substring(7);
+                    $("#updateDcustomTel").val(tel);
+                    //预订人数
+                    $("#updateBookNumber").val($(this).parent().prevAll().eq(0).html());
+                    //确认修改
+                    $("#updateDeskListBtn").unbind("click").bind("click",function () {
+                        $.post({
+                            url:("${pageContext.request.contextPath}/renewaldesklist"),
+                            data:{
+                                deskId:   $("#updateDeskId").val(),
+                                deskState:$("#updateDeskState").val(),
+                                customName: $("#updateDcustomName").val(),
+                                bookNumber: $("#updateBookNumber").val()
+                            },
+                            success:function (data) {
+                                if(data != null){
+                                    alert(data);
+                                    //关闭模态框
+                                    $("#updateDeskList").modal('hide');
+                                    //重新请求数据
+                                    $("#desklist").html("");
+                                    $.post({
+                                        url:("${pageContext.request.contextPath}/getdesklist"),
+                                        success: function (data) {
+                                            var deskListInfo = JSON.parse(data);
+                                            var str = ``;
+                                            for (var i = 0; i < deskListInfo.length; i++){
+                                                str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${deskListInfo[i].deskId}"}</td>
+                            <td>${"${deskListInfo[i].deskState}"}</td>
+                            <td>${"${deskListInfo[i].customName}"}</td>
+                            <td>${"${deskListInfo[i].bookNumber}"}</td>
+                            <td>
+                                <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" class="updateDeskList"  data-toggle="modal" data-target="#updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                            }
+                                            $("#desklist").html(str);
+                                        }
+                                    });
+                                }else {
+                                    alert("修改失败");
+                                }
+                            }
+                        })
+                    })
+                }
+
+                //修改当前顾客信息
+                $("#updateDeskListCustBtn").click(function () {
+
+                    //切换选项卡
+                    $(".projectList_cons:eq(1)").css("display","none");
+                    $("#list li:eq(1)").attr("class","");
+                    $(".projectList_cons:eq(0)").css("display","block");
+                    $("#list li:eq(0)").attr("class","active");
+
+                    //切换模态框
+                    $('#updateDeskList').modal('hide');
+                    $('#updateCustomer').modal('show');
+
+                    //获得当前顾客姓名
+                    var name = $(_this).parent().prevAll().eq(1).html();
+                    var customer = {};
+                    //遍历顾客表
+                    for(var i = 0; i < $("#customer tr").length; i++){
+                        if($("#customer tr").eq(i).find("td").eq(2).html() == name){
+                            customer.custId = $("#customer tr").eq(i).find("td").eq(1).html();
+                            customer.customName = $("#customer tr").eq(i).find("td").eq(2).html();
+                            customer.customTel = $("#customer tr").eq(i).find("td").eq(3).html();
+                            customer.custGender = $("#customer tr").eq(i).find("td").eq(4).html();
+                            break;
+                        }
+                    }
+                    //将信息添加到修改模态框
+                    $("#updatecustomId").val(customer.custId);
+                    $("#updatecustomName").val(customer.customName);
+                    $("#updatecustomTel").val(customer.customTel);
+                    $("#updatecustGender").val(customer.custGender);
                 })
             })
         }
@@ -400,7 +709,7 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="updatecustomId">顾客Id</label>
-                                            <input type="text" class="form-control" id="updatecustomId" placeholder="顾客姓名" disabled>
+                                            <input type="text" class="form-control" id="updatecustomId" placeholder="顾客Id" disabled>
                                         </div>
                                         <div class="form-group">
                                             <label for="updatecustomName">顾客姓名</label>
@@ -445,7 +754,166 @@
             <%--订座管理--%>
             <div class="projectList_cons">
                 <div class="show clear">
+                    <!-- 按钮触发模态框 -->
+                    <button id="tableReservation" class="btn btn-primary" data-toggle="modal" data-target="#addDeskList">
+                        订座
+                    </button>
+                    <!-- 订座功能模态框（Modal） -->
+                    <div class="modal fade" id="addDeskList" tabindex="-1" role="dialog" aria-labelledby="deskListModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="deskListModalLabel">
+                                        订座信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="dropdown">
+                                            <label for="deskListId">座位Id</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="deskListId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="deskStateList" class="dropdown-menu" aria-labelledby="deskListId"></ul>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="dcustomName">顾客姓名</label>
+                                            <input type="text" class="form-control" id="dcustomName" placeholder="顾客姓名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="dcustomTel">联系电话</label>
+                                            <input type="text" class="form-control" id="dcustomTel" placeholder="联系电话">
+                                        </div>
 
+                                        <div class="dropdown">
+                                            <label for="dcustGender">性别</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="dcustGender" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="custGenderList" class="dropdown-menu" aria-labelledby="dcustGender">
+                                                <li><a href="#">男</a></li>
+                                                <li><a href="#">女</a></li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="bookNumber">预订人数</label>
+                                            <input type="text" class="form-control" id="bookNumber" placeholder="预订人数">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="addDeskListBtn" type="button" class="btn btn-primary">
+                                        确认订座
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+                    <!-- 退订功能模态框（Modal） -->
+                    <div class="modal fade" id="deleteDeskList" tabindex="-1" role="dialog" aria-labelledby="deletedeskListModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h3 class="modal-title" id="deletedeskListModalLabel">
+                                        请核对顾客信息
+                                    </h3>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="quitDeskId">座位Id</label>
+                                            <input type="text" class="form-control" id="quitDeskId" placeholder="座位Id" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="quitDcustomName">顾客姓名</label>
+                                            <input type="text" class="form-control" id="quitDcustomName" placeholder="顾客姓名">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="quitDcustomTel">联系电话</label>
+                                            <input type="text" class="form-control" id="quitDcustomTel" placeholder="联系电话">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="quitBookNumber">预订人数</label>
+                                            <input type="text" class="form-control" id="quitBookNumber" placeholder="预订人数">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="deleteDeskListBtn" type="button" class="btn btn-primary">
+                                        确认退订
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+                    <!-- 修改功能模态框（Modal） -->
+                    <div class="modal fade" id="updateDeskList" tabindex="-1" role="dialog" aria-labelledby="updatedeskListModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h3 class="modal-title" id="updatedeskListModalLabel">
+                                        请核对信息
+                                    </h3>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="updateDeskId">座位Id</label>
+                                            <input type="text" class="form-control" id="updateDeskId" placeholder="座位Id" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="updateDeskState">座位状态</label>
+                                            <input type="text" class="form-control" id="updateDeskState" placeholder="座位状态" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="updateDcustomName">顾客姓名</label>
+                                            <input type="text" class="form-control" id="updateDcustomName" placeholder="顾客姓名">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="updateDcustomTel">联系电话</label>
+                                            <input type="text" class="form-control" id="updateDcustomTel" placeholder="联系电话" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="updateBookNumber">预订人数</label>
+                                            <input type="text" class="form-control" id="updateBookNumber" placeholder="预订人数">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="updateDeskListCustBtn" type="button" class="btn btn-primary l">
+                                        修改当前顾客信息
+                                    </button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="updateDeskListBtn" type="button" class="btn btn-primary">
+                                        确认修改
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
                     <table class="zl_table">
                         <thead>
                         <tr>
