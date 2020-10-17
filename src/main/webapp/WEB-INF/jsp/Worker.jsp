@@ -709,7 +709,6 @@
                         })
                     })
                 }
-
                 //修改当前顾客信息
                 $("#updateDeskListCustBtn").click(function () {
 
@@ -741,14 +740,66 @@
                     $("#updatecustomName").val(customer.customName);
                     $("#updatecustomTel").val(customer.customTel);
                     $("#updatecustGender").val(customer.custGender);
+
+                    //确认修改
+                    $("#updateCustomertBtn").unbind("click").bind("click",function () {
+                        $.post({
+                            url:("${pageContext.request.contextPath}/updatecustomer"),
+                            data:{
+                                custId:  $("#updatecustomId").val(),
+                                customName: $("#updatecustomName").val(),
+                                customTel: $("#updatecustomTel").val(),
+                                custGender: $("#updatecustGender").val()
+                            },
+                            success:function (data) {
+                                if(data != null){
+                                    alert(data);
+                                    //修改成功后关闭模态框
+                                    $("#updateCustomer").modal('hide');
+                                    //重新获取数据
+                                    $("#customer").html("");
+                                    $.post({
+                                        url: ("${pageContext.request.contextPath}/getcustomer"),
+                                        success: function (data) {
+                                            var customerInfo = JSON.parse(data);
+                                            var str =``;
+                                            for (var i = 0; i < customerInfo.length; i++){
+                                                str +=`<tr>
+                                                    <td width="49px"><input type="checkbox"></td>
+                                                    <td>${"${customerInfo[i].custId}"}</td>
+                                                    <td>${"${customerInfo[i].customName}"}</td>
+                                                    <td>${"${customerInfo[i].customTel}"}</td>
+                                                    <td>${"${customerInfo[i].custGender}"}</td>
+                                                    <td>
+                                                        <a href="#" title="删除" id="deletecustomer"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                                        <a href="#" title="修改" id="updatecustomer"  data-toggle="modal" data-target="#updateCustomer"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                                    </td>
+                                                </tr>`;
+                                            }
+                                            $("#customer").html(str);
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                    })
                 })
             })
+
 
             //删除修改订单
             $("#orderdish").on("click","a",function () {
                 //删除
                 if($(this).attr("title") == "删除"){
                     var _this = this;
+
+                    $("#deleteOrderDishId").val($(this).parent().prevAll().eq(5).html());
+                    $("#deleteOrderFoodId").val($(this).parent().prevAll().eq(4).html());
+                    $("#deleteOrderFoodName").val($(this).parent().prevAll().eq(3).html());
+                    $("#deleteOrderFoodClass").val($(this).parent().prevAll().eq(2).html());
+                    $("#deleteOrderFoodPrice").val($(this).parent().prevAll().eq(1).html());
+                    $("#deleteDeskId").val($(this).parent().prevAll().eq(0).html());
+
                     $('#deleteOrderDish').modal('show');
 
                     $("#deleteOrderDishBtn").unbind("click").bind("click",function () {
@@ -935,15 +986,22 @@
 
             //结账功能
             $("#clearOrderDesk").unbind("click").bind("click",function () {
+
+                $("#clearOrderDeskId .text").html("请选择");
+                $("#clearCustNmae").val("");
+                $("#totalMoney").val("");
+
                 //获得未结账的桌号并添加到下拉菜单
                 $.post({
                     url:("${pageContext.request.contextPath}/getorderdish"),
                     success:function (data) {
                         var deskId = JSON.parse(data);
+                        //通过集合获取
                         var set = new Set();
                         for(var i = 0; i < deskId.length; i++){
                             set.add(deskId[i].deskId);
                         }
+                        //遍历添加
                         var str = ``;
                         for (var item of set.keys()){
                             str += `<li><a href="#">${"${item}"}</a></li>`;
@@ -953,10 +1011,9 @@
                 })
                 clickList("#clearOrderDeskIdList","#clearOrderDeskId");
 
-                $("#clearOrderDeskIdList").on("click","li",function () {
-                    
-                })
+                /*$("#clearOrderDeskIdList").on("click","li",function () {
 
+                })*/
             })
         }
     </script>
@@ -1340,12 +1397,13 @@
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                                     </button>
                                     <button id="addorderDishBtn" type="button" class="btn btn-primary">
-                                        订菜
+                                        结账
                                     </button>
                                 </div>
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal -->
                     </div>
+
                     <!-- 确认删除订单功能模态框（Modal） -->
                     <div class="modal fade" id="deleteOrderDish" tabindex="-1" role="dialog" aria-labelledby="deleteOrderDishModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -1366,7 +1424,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="deleteOrderFoodId">菜品Id</label>
-                                            <input type="text" class="form-control" id="deleteOrderFoodId" placeholder="订单Id" disabled>
+                                            <input type="text" class="form-control" id="deleteOrderFoodId" placeholder="菜品Id" disabled>
                                         </div>
                                         <div class="form-group">
                                             <label for="deleteOrderFoodName">菜名</label>
@@ -1472,6 +1530,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <form>
+
                                         <div class="dropdown">
                                             <label for="clearOrderDeskId">请选择结账的桌号</label><br>
                                             <button class="btn btn-default dropdown-toggle" type="button" id="clearOrderDeskId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -1504,7 +1563,6 @@
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal -->
                     </div>
-
 
                     <table class="zl_table">
                         <thead>
