@@ -93,6 +93,13 @@
                 $(".projectList_cons").eq($(this).index()).css("display","block");
             });
         }
+        //下拉菜单点击
+        function clickList(node1,node2) {
+            $(node1).on("click","li",function () {
+                $(node2+" .text").html("");
+                $(node2+" .text").html($(this).text());
+            })
+        }
         //获得员工姓名并显示
         function getName() {
             /*?username=xxx*/
@@ -147,7 +154,7 @@
                             <td>${"${deskListInfo[i].bookNumber}"}</td>
                             <td>
                                 <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
-                                <a href="#" title="修改" class="updateDeskList"  data-toggle="modal" data-target="#updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="修改" class="updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                     }
@@ -162,19 +169,18 @@
                     var str = ``;
                     for (var i = 0; i < orderDishInfo.length; i++){
                         str +=`<tr>
-                            <td width="49px"><input type="checkbox"></td>
-                            <td>${"${orderDishInfo[i].orderdishId}"}</td>
-                            <td>${"${orderDishInfo[i].foodId}"}</td>
-                            <td>${"${orderDishInfo[i].foodName}"}</td>
-                            <td>${"${orderDishInfo[i].foodClass}"}</td>
-                            <td>${"${orderDishInfo[i].foodPrice}"}</td>
-                            <td>${"${orderDishInfo[i].deskId}"}</td>
-                            <td>
-                                <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
-                                <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
-                          
-                            </td>
-                        </tr>`;
+                                    <td width="49px"><input type="checkbox"></td>
+                                    <td>${"${orderDishInfo[i].orderdishId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodName}"}</td>
+                                    <td>${"${orderDishInfo[i].foodClass}"}</td>
+                                    <td>${"${orderDishInfo[i].foodPrice}"}</td>
+                                    <td>${"${orderDishInfo[i].deskId}"}</td>
+                                    <td>
+                                        <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                        <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                    </td>
+                                </tr>`;
                     }
                     $("#orderdish").html(str);
                 }
@@ -229,6 +235,14 @@
             })
 
             //订座模块
+            $("#tableReservation").click(function () {
+                //初始化模态框
+                $("#deskListId .text").html("请选择");
+                $("#dcustomName").val("");
+                $("#dcustomTel").val("");
+                $("#bookNumber").val("");
+                $("#dcustGender .text").html("请选择");
+            })
             //将状态为0的座位添加到订座信息上
             $("#tableReservation").click(function () {
                 var str = ``;
@@ -243,19 +257,12 @@
                 $("#deskListId .text").html("请选择");
                 $("#dcustGender .text").html("请选择");
             })
-
-            //下拉菜单
-            $("#deskStateList").on("click","li",function () {
-                $("#deskListId .text").html("");
-                $("#deskListId .text").html($(this).text());
-            })
-            $("#custGenderList").on("click","li",function () {
-                $("#dcustGender .text").html("");
-                $("#dcustGender .text").html($(this).text());
-            })
-
+            //下拉菜单点击事件
+            clickList("#deskStateList","#deskListId");
+            clickList("#custGenderList","#dcustGender");
             //订座
             $("#addDeskListBtn").unbind("click").bind("click",function () {
+
                 if($("#deskListId .text").html() == "请选择"){
                     alert("请选择座位");
                 }else if(!$("#dcustomName").val()){
@@ -297,7 +304,7 @@
                             <td>${"${deskListInfo[i].bookNumber}"}</td>
                             <td>
                                 <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
-                                <a href="#" title="修改" class="updateDeskList"  data-toggle="modal" data-target="#updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="修改" class="updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                                         }
@@ -333,6 +340,139 @@
                         }
                     })
                 }
+            })
+
+            //订单模块
+            $("#addOrderDesk").unbind("click").bind("click",function () {
+                //重置模态框
+                $("#orderFoodtId .text").html("请选择");
+                $("#foodName").val("");
+                $("#foodClass").val("");
+                $("#foodPrice").val("");
+                $("#orderDeskId .text").html("请选择");
+
+                //获得菜谱id并添加
+                $.post({
+                    url:("${pageContext.request.contextPath}/getfoodlist"),
+                    success:function (data) {
+                        var foodListInfo = JSON.parse(data);
+                        var str = ``;
+                        for(var i = 0; i < foodListInfo.length; i++){
+                            str += `<li><a href="#">${"${foodListInfo[i].foodId}"}</a></li>`;
+                        }
+                        $("#orderDishList").html(str);
+                    }
+                })
+                clickList("#orderDishList","#orderFoodtId");
+                //获得状态为1的桌号并添加
+                $.post({
+                    url:("${pageContext.request.contextPath}/getdesklist"),
+                    success:function (data) {
+                        var deskListInfo = JSON.parse(data);
+                        var str = ``;
+                        for (var i = 0; i < deskListInfo.length; i++){
+                            if(deskListInfo[i].deskState == "1"){
+                                str += `<li><a href="#">${"${deskListInfo[i].deskId}"}</a></li>`;
+                            }
+                        }
+                        $("#orderDeskIdList").html(str);
+                    }
+                })
+                clickList("#orderDeskIdList","#orderDeskId");
+
+                //通过菜谱Id获得菜品数据
+                $("#orderDishList").on("click","li",function () {
+                    $.post({
+                        url:"${pageContext.request.contextPath}/searchfoodlist",
+                        data:{
+                            foodId: $(this).text()
+                        },
+                        success:function (data) {
+                            var foodInfo = JSON.parse(data);
+                            $("#foodName").val(foodInfo.foodName);
+                            $("#foodClass").val(foodInfo.foodClass);
+                            $("#foodPrice").val(foodInfo.foodPrice);
+                        }
+                    })
+                })
+
+                //通过菜名来获取菜品数据
+                $("#foodName").unbind("blur").bind("blur",function () {
+                    $.post({
+                        url:"${pageContext.request.contextPath}/getfoodlist",
+                        success:function (data) {
+                            var foodInfo = JSON.parse(data);
+                            for(var i = 0; i <foodInfo.length; i++){
+                                if(foodInfo[i].foodName == $("#foodName").val()){
+                                    $("#orderFoodtId .text").html(foodInfo[i].foodId);
+                                    $("#foodClass").val(foodInfo[i].foodClass);
+                                    $("#foodPrice").val(foodInfo[i].foodPrice);
+                                    break;
+                                }
+                            }
+                        }
+                    })
+                })
+
+                //确认订菜
+                $("#addorderDishBtn").unbind("click").bind("click",function () {
+                    if($("#orderFoodtId .text").html() == "请选择" || !$("#orderFoodtId .text").html()){
+                        alert("请选择菜号");
+                    }else if(!$("#foodName").val()){
+                        alert("请输入菜名");
+                    }else if(!$("#foodClass").val()){
+                        alert("请输入菜品类别");
+                    }else if(!$("#foodPrice").val()){
+                        alert("请输入菜品价格");
+                    }else if($("#orderDeskId .text").html() == "请选择" || !$("#orderDeskId .text").html()){
+                        alert("请选择要订菜的座位");
+                    }else {
+                        $.post({
+                            url:("${pageContext.request.contextPath}/insertorderdish"),
+                            data:{
+                                foodId: $("#orderFoodtId .text").html(),
+                                foodName:$("#foodName").val(),
+                                foodClass:$("#foodClass").val(),
+                                foodPrice: $("#foodPrice").val(),
+                                deskId: $("#orderDeskId .text").html()
+                            },
+                            success:function (data) {
+                                if(data != null){
+                                    alert(data);
+                                    //关闭模态框
+                                    $('#addOrderDish').modal('hide');
+                                    //重新获得信息
+                                    $("#orderdish").html("");
+                                    $.post({
+                                        url:("${pageContext.request.contextPath}/getorderdish"),
+                                        success: function (data) {
+                                            var orderDishInfo = JSON.parse(data);
+                                            var str = ``;
+                                            for (var i = 0; i < orderDishInfo.length; i++){
+                                                str +=`<tr>
+                                    <td width="49px"><input type="checkbox"></td>
+                                    <td>${"${orderDishInfo[i].orderdishId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodName}"}</td>
+                                    <td>${"${orderDishInfo[i].foodClass}"}</td>
+                                    <td>${"${orderDishInfo[i].foodPrice}"}</td>
+                                    <td>${"${orderDishInfo[i].deskId}"}</td>
+                                    <td>
+                                        <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                        <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                    </td>
+                                </tr>`;
+                                            }
+                                            $("#orderdish").html(str);
+                                        }
+                                    });
+                                }else {
+                                    alert("添加失败");
+                                }
+                            }
+                        })
+                    }
+                })
             })
         }
         //删除修改模块
@@ -483,7 +623,7 @@
                             <td>${"${deskListInfo[i].bookNumber}"}</td>
                             <td>
                                 <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
-                                <a href="#" title="修改" class="updateDeskList"  data-toggle="modal" data-target="#updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="修改" class="updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                                             }
@@ -503,8 +643,8 @@
                 var _this = this;
                 if($(this).parent().prevAll().eq(2).html() == "0"){
                     alert("该座位没有被预订");
-                    $('#updateDeskList').modal('toggle');
                 }else {
+                    $('#updateDeskList').modal('show');
                     //座位Id
                     $("#updateDeskId").val($(this).parent().prevAll().eq(3).html());
                     //座位状态
@@ -555,7 +695,7 @@
                             <td>${"${deskListInfo[i].bookNumber}"}</td>
                             <td>
                                 <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
-                                <a href="#" title="修改" class="updateDeskList"  data-toggle="modal" data-target="#updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                <a href="#" title="修改" class="updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
                             </td>
                         </tr>`;
                                             }
@@ -602,6 +742,221 @@
                     $("#updatecustomTel").val(customer.customTel);
                     $("#updatecustGender").val(customer.custGender);
                 })
+            })
+
+            //删除修改订单
+            $("#orderdish").on("click","a",function () {
+                //删除
+                if($(this).attr("title") == "删除"){
+                    var _this = this;
+                    $('#deleteOrderDish').modal('show');
+
+                    $("#deleteOrderDishBtn").unbind("click").bind("click",function () {
+                        $.post({
+                            url:("${pageContext.request.contextPath}/deleteorderdish"),
+                            data:{
+                                orderdishId: $(_this).parent().prevAll().eq(5).html()
+                            },
+                            success:function (data) {
+                                if(data != null){
+                                    alert(data);
+                                    $('#deleteOrderDish').modal('hide');
+                                    //重新获取数据
+                                    $("#orderdish").html("");
+                                    $.post({
+                                        url:("${pageContext.request.contextPath}/getorderdish"),
+                                        success: function (data) {
+                                            var orderDishInfo = JSON.parse(data);
+                                            var str = ``;
+                                            for (var i = 0; i < orderDishInfo.length; i++){
+                                                str +=`<tr>
+                                    <td width="49px"><input type="checkbox"></td>
+                                    <td>${"${orderDishInfo[i].orderdishId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodName}"}</td>
+                                    <td>${"${orderDishInfo[i].foodClass}"}</td>
+                                    <td>${"${orderDishInfo[i].foodPrice}"}</td>
+                                    <td>${"${orderDishInfo[i].deskId}"}</td>
+                                    <td>
+                                        <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                        <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                    </td>
+                                </tr>`;
+                                            }
+                                            $("#orderdish").html(str);
+                                        }
+                                    });
+                                }else {
+                                    alert("删除失败");
+                                }
+                            }
+                        })
+                    })
+
+                }
+                //修改
+                else if($(this).attr("title") == "修改"){
+
+                    var _this = this;
+
+                    //显示当前订单信息
+                    $("#updateOrderFoodtId .text").html($(_this).parent().prevAll().eq(4).html());
+                    $("#updateFoodName").val($(_this).parent().prevAll().eq(3).html());
+                    $("#updateFoodClass").val($(_this).parent().prevAll().eq(2).html());
+                    $("#updateFoodPrice").val($(_this).parent().prevAll().eq(1).html());
+                    $("#updateOrderDeskId .text").html($(_this).parent().prevAll().eq(0).html());
+
+                    $('#updateOrderDish').modal('show');
+                    //获得菜谱id并添加
+                    $.post({
+                        url:("${pageContext.request.contextPath}/getfoodlist"),
+                        success:function (data) {
+                            var foodListInfo = JSON.parse(data);
+                            var str = ``;
+                            for(var i = 0; i < foodListInfo.length; i++){
+                                str += `<li><a href="#">${"${foodListInfo[i].foodId}"}</a></li>`;
+                            }
+                            $("#updateOrderDishList").html(str);
+                        }
+                    })
+                    clickList("#updateOrderDishList","#updateOrderFoodtId");
+                    //获得状态为1的桌号并添加
+                    $.post({
+                        url:("${pageContext.request.contextPath}/getdesklist"),
+                        success:function (data) {
+                            var deskListInfo = JSON.parse(data);
+                            var str = ``;
+                            for (var i = 0; i < deskListInfo.length; i++){
+                                if(deskListInfo[i].deskState == "1"){
+                                    str += `<li><a href="#">${"${deskListInfo[i].deskId}"}</a></li>`;
+                                }
+                            }
+                            $("#updateOrderDeskIdList").html(str);
+                        }
+                    })
+                    clickList("#updateOrderDeskIdList","#updateOrderDeskId");
+
+                    //通过菜谱Id获得菜品数据
+                    $("#updateOrderDishList").on("click","li",function () {
+                        $.post({
+                            url:"${pageContext.request.contextPath}/searchfoodlist",
+                            data:{
+                                foodId: $(this).text()
+                            },
+                            success:function (data) {
+                                var foodInfo = JSON.parse(data);
+                                $("#updateFoodName").val(foodInfo.foodName);
+                                $("#updateFoodClass").val(foodInfo.foodClass);
+                                $("#updateFoodPrice").val(foodInfo.foodPrice);
+                            }
+                        })
+                    })
+
+                    //通过菜名来获取菜品数据
+                    $("#updateFoodName").unbind("blur").bind("blur",function () {
+                        $.post({
+                            url:"${pageContext.request.contextPath}/getfoodlist",
+                            success:function (data) {
+                                var foodInfo = JSON.parse(data);
+                                for(var i = 0; i <foodInfo.length; i++){
+                                    if(foodInfo[i].foodName == $("#updateFoodName").val()){
+                                        $("#updateOrderFoodtId .text").html(foodInfo[i].foodId);
+                                        $("#updateFoodClass").val(foodInfo[i].foodClass);
+                                        $("#updateFoodPrice").val(foodInfo[i].foodPrice);
+                                        break;
+                                    }
+                                }
+                            }
+                        })
+                    })
+
+                    //确认修改
+                    $("#updateOrderDishBtn").unbind("click").bind("click",function () {
+                        if($("#updateOrderFoodtId .text").html() == "请选择" || !$("#updateOrderFoodtId .text").html()){
+                            alert("请选择菜号");
+                        }else if(!$("#updateFoodName").val()){
+                            alert("请输入菜名");
+                        }else if(!$("#updateFoodClass").val()){
+                            alert("请输入菜品类别");
+                        }else if(!$("#updateFoodPrice").val()){
+                            alert("请输入菜品价格");
+                        }else if($("#updateOrderDeskId .text").html() == "请选择" || !$("#updateOrderDeskId .text").html()){
+                            alert("请选择要订菜的座位");
+                        }else {
+                            $.post({
+                                url:("${pageContext.request.contextPath}/updateorderdish"),
+                                data:{
+                                    orderdishId:$(_this).parent().prevAll().eq(5).html(),
+                                    foodId: $("#updateOrderFoodtId .text").html(),
+                                    foodName:$("#updateFoodName").val(),
+                                    foodClass:$("#updateFoodClass").val(),
+                                    foodPrice: $("#updateFoodPrice").val(),
+                                    deskId: $("#updateOrderDeskId .text").html()
+                                },
+                                success:function (data) {
+                                    if(data){
+                                        alert(data);
+                                        //关闭模态框
+                                        $('#updateOrderDish').modal('hide');
+                                        //重新获得信息
+                                        $("#orderdish").html("");
+                                        $.post({
+                                            url:("${pageContext.request.contextPath}/getorderdish"),
+                                            success: function (data) {
+                                                var orderDishInfo = JSON.parse(data);
+                                                var str = ``;
+                                                for (var i = 0; i < orderDishInfo.length; i++){
+                                                    str +=`<tr>
+                                    <td width="49px"><input type="checkbox"></td>
+                                    <td>${"${orderDishInfo[i].orderdishId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodName}"}</td>
+                                    <td>${"${orderDishInfo[i].foodClass}"}</td>
+                                    <td>${"${orderDishInfo[i].foodPrice}"}</td>
+                                    <td>${"${orderDishInfo[i].deskId}"}</td>
+                                    <td>
+                                        <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                        <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                    </td>
+                                </tr>`;
+                                                }
+                                                $("#orderdish").html(str);
+                                            }
+                                        });
+                                    }else {
+                                        alert("修改失败");
+                                    }
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+
+            //结账功能
+            $("#clearOrderDesk").unbind("click").bind("click",function () {
+                //获得未结账的桌号并添加到下拉菜单
+                $.post({
+                    url:("${pageContext.request.contextPath}/getorderdish"),
+                    success:function (data) {
+                        var deskId = JSON.parse(data);
+                        var set = new Set();
+                        for(var i = 0; i < deskId.length; i++){
+                            set.add(deskId[i].deskId);
+                        }
+                        var str = ``;
+                        for (var item of set.keys()){
+                            str += `<li><a href="#">${"${item}"}</a></li>`;
+                        }
+                        $("#clearOrderDeskIdList").html(str);
+                    }
+                })
+                clickList("#clearOrderDeskIdList","#clearOrderDeskId");
+
+                $("#clearOrderDeskIdList").on("click","li",function () {
+                    
+                })
+
             })
         }
     </script>
@@ -932,6 +1287,224 @@
             <%--订单管理--%>
             <div class="projectList_cons">
                 <div class="show clear">
+                    <!-- 按钮触发模态框 -->
+                    <button id="addOrderDesk" class="btn btn-primary" data-toggle="modal" data-target="#addOrderDish">
+                        订菜
+                    </button>
+                    <!-- 订菜功能模态框（Modal） -->
+                    <div class="modal fade" id="addOrderDish" tabindex="-1" role="dialog" aria-labelledby="orderDishModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="orderDishModalLabel">
+                                        订菜信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="dropdown">
+                                            <label for="orderFoodtId">菜号</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="orderFoodtId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="orderDishList" class="dropdown-menu" aria-labelledby="orderFoodtId"></ul>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foodName">菜名</label>
+                                            <input type="text" class="form-control" id="foodName" placeholder="菜名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foodClass">菜系</label>
+                                            <input type="text" class="form-control" id="foodClass" placeholder="菜系">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foodPrice">价格</label>
+                                            <input type="text" class="form-control" id="foodPrice" placeholder="价格">
+                                        </div>
+                                        <div class="dropdown">
+                                            <label for="orderDeskId">桌号</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="orderDeskId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="orderDeskIdList" class="dropdown-menu" aria-labelledby="orderDeskId"></ul>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="addorderDishBtn" type="button" class="btn btn-primary">
+                                        订菜
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+                    <!-- 确认删除订单功能模态框（Modal） -->
+                    <div class="modal fade" id="deleteOrderDish" tabindex="-1" role="dialog" aria-labelledby="deleteOrderDishModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="deleteOrderDishModalLabel">
+                                        请核对订单信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="deleteOrderDishId">订单Id</label>
+                                            <input type="text" class="form-control" id="deleteOrderDishId" placeholder="订单Id" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="deleteOrderFoodId">菜品Id</label>
+                                            <input type="text" class="form-control" id="deleteOrderFoodId" placeholder="订单Id" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="deleteOrderFoodName">菜名</label>
+                                            <input type="text" class="form-control" id="deleteOrderFoodName" placeholder="菜名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="deleteOrderFoodClass">菜系</label>
+                                            <input type="text" class="form-control" id="deleteOrderFoodClass" placeholder="菜系">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="deleteOrderFoodPrice">价格</label>
+                                            <input type="text" class="form-control" id="deleteOrderFoodPrice" placeholder="价格">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="deleteDeskId">桌号</label>
+                                            <input type="text" class="form-control" id="deleteDeskId" placeholder="桌号">
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="deleteOrderDishBtn" type="button" class="btn btn-primary">
+                                        确认删除
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+                    <!-- 确认修改订单功能模态框（Modal） -->
+                    <div class="modal fade" id="updateOrderDish" tabindex="-1" role="dialog" aria-labelledby="updateOrderDishModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="updateOrderDishModalLabel">
+                                        请核对信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="dropdown">
+                                            <label for="updateOrderFoodtId">菜号</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="updateOrderFoodtId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="updateOrderDishList" class="dropdown-menu" aria-labelledby="updateOrderFoodtId"></ul>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateFoodName">菜名</label>
+                                            <input type="text" class="form-control" id="updateFoodName" placeholder="菜名">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateFoodClass">菜系</label>
+                                            <input type="text" class="form-control" id="updateFoodClass" placeholder="菜系">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateFoodPrice">价格</label>
+                                            <input type="text" class="form-control" id="updateFoodPrice" placeholder="价格">
+                                        </div>
+                                        <div class="dropdown">
+                                            <label for="updateOrderDeskId">桌号</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="updateOrderDeskId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="updateOrderDeskIdList" class="dropdown-menu" aria-labelledby="updateOrderDeskId"></ul>
+                                        </div>
+
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="updateOrderDishBtn" type="button" class="btn btn-primary">
+                                        确认修改
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+                    <!-- 结账模块 -->
+                    <button id="clearOrderDesk" class="btn btn-primary" data-toggle="modal" data-target="#clearOrderDish">
+                        结账
+                    </button>
+                    <!-- 结账功能模态框（Modal） -->
+                    <div class="modal fade" id="clearOrderDish" tabindex="-1" role="dialog" aria-labelledby="clearOrderDishModal" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="clearOrderDishModal">
+                                        结账
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="dropdown">
+                                            <label for="clearOrderDeskId">请选择结账的桌号</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="clearOrderDeskId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="clearOrderDeskIdList" class="dropdown-menu" aria-labelledby="clearOrderDeskId"></ul>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="clearCustNmae">顾客姓名</label>
+                                            <input type="text" class="form-control" id="clearCustNmae" placeholder="顾客姓名">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="totalMoney">总共消费</label>
+                                            <input type="text" class="form-control" id="totalMoney" placeholder="总共消费">
+                                        </div>
+
+
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="clearOrderDishBtn" type="button" class="btn btn-primary">
+                                        订菜
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
 
                     <table class="zl_table">
                         <thead>

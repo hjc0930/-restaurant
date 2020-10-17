@@ -20,6 +20,7 @@ public class FoodlistController {
     @Qualifier("FoodlistServiceImpl")
     private FoodlistService foodlistService;
 
+    //获得菜谱信息
     @RequestMapping("/getfoodlist")
     @ResponseBody
     public String getFoodlist() throws JsonProcessingException {
@@ -28,6 +29,7 @@ public class FoodlistController {
         return mapper.writeValueAsString(foodlists);
     }
 
+    //添加菜到菜谱
     @RequestMapping("/addfoodlist")
     @ResponseBody
     public String addFoodlist(Foodlist foodlist){
@@ -39,6 +41,7 @@ public class FoodlistController {
         return isAdd;
     }
 
+    //删除
     @RequestMapping("/deletefoodlist")
     @ResponseBody
     public String deleteFoodList(Integer foodId){
@@ -49,6 +52,7 @@ public class FoodlistController {
         return isDelete;
     }
 
+    //更新
     @RequestMapping("/updatefoodlist")
     @ResponseBody
     public String updateWorker(Foodlist foodlist){
@@ -57,5 +61,16 @@ public class FoodlistController {
             isUpdate = "修改成功";
         }
         return isUpdate;
+    }
+
+    //根据Id查询
+    @ResponseBody
+    @RequestMapping("/searchfoodlist")
+    public String searchFoodList(String foodId) throws JsonProcessingException {
+        int foodId_int = Integer.parseInt(foodId);
+        Foodlist foodlist = foodlistService.queryFoodlistById(foodId_int);
+
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(foodlist);
     }
 }

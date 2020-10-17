@@ -18,11 +18,51 @@ public class OrderdishController {
     @Qualifier("OrderdishServiceImpl")
     private OrderdishService orderdishService;
 
+    //查询所有信息
     @RequestMapping("/getorderdish")
     @ResponseBody
     public String getOrderDish() throws JsonProcessingException {
         List<Orderdish> orderdishes = orderdishService.queryAllOrderdish();
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(orderdishes);
+    }
+
+    //添加订单
+    @RequestMapping("/insertorderdish")
+    @ResponseBody
+    public String addOrderDish(Orderdish orderdish){
+        String isAdd = null;
+
+        if(orderdishService.addOrderdish(orderdish) == 1){
+            isAdd = "添加成功";
+        }
+
+        return isAdd;
+    }
+
+    //删除订单
+    @RequestMapping("/deleteorderdish")
+    @ResponseBody
+    public String deleteOrderDish(String orderdishId){
+        String isDelete = null;
+
+        int orderDishId_int = Integer.parseInt(orderdishId);
+        if(orderdishService.deleteOrderdish(orderDishId_int) == 1){
+            isDelete = "删除成功";
+        }
+
+        return isDelete;
+    }
+
+    @RequestMapping("/updateorderdish")
+    @ResponseBody
+    public String updateOrderDish(Orderdish orderdish){
+        String isUpdate = null;
+
+        if(orderdishService.updateOrderdish(orderdish) == 1){
+            isUpdate = "修改成功";
+        }
+
+        return isUpdate;
     }
 }

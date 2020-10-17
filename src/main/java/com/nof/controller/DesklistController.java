@@ -26,6 +26,7 @@ public class DesklistController {
     @Qualifier("CustomerServiceImpl")
     private CustomerService customerService;
 
+    //获得座位信息
     @ResponseBody
     @RequestMapping("/getdesklist")
     public String getDeskList() throws JsonProcessingException {
