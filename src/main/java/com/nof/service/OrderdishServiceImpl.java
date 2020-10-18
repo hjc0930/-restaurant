@@ -20,6 +20,10 @@ public class OrderdishServiceImpl implements OrderdishService{
         return orderdishMapper.deleteOrderdish(orderdishId);
     }
 
+    public int deleteOrderdishBydeskId(int deskId) {
+        return orderdishMapper.deleteOrderdishBydeskId(deskId);
+    }
+
     public int updateOrderdish(Orderdish orderdish) {
         return orderdishMapper.updateOrderdish(orderdish);
     }

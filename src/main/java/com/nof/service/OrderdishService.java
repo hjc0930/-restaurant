@@ -11,6 +11,9 @@ public interface OrderdishService {
     //delete
     int deleteOrderdish(int orderdishId);
 
+    //deleteBydeskId
+    int deleteOrderdishBydeskId(int deskId);
+
     //update
     int updateOrderdish(Orderdish orderdish);
 

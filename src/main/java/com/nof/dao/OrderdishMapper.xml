@@ -12,6 +12,10 @@
         delete from restaurantdb.orderdish where orderdishId=#{orderdishId}
     </delete>
 
+    <delete id="deleteOrderdishBydeskId" parameterType="int">
+        delete from restaurantdb.orderdish where deskId=#{deskId}
+    </delete>
+
     <update id="updateOrderdish" parameterType="Orderdish">
         update restaurantdb.orderdish
         set foodId = #{foodId},foodName = #{foodName},foodClass = #{foodClass},deskId = #{deskId}

@@ -11,6 +11,9 @@ public interface CustomerService {
     //delete
     int deleteCustomer(int custId);
 
+    //deleteByName
+    int deleteCustomerByName(String custiomName);
+
     //update
     int updateCustomer(Customer customer);
 

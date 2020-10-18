@@ -20,6 +20,11 @@ public class CustomerServiceImpl implements CustomerService{
         return customerMapper.deleteCustomer(custId);
     }
 
+
+    public int deleteCustomerByName(String custiomName) {
+        return customerMapper.deleteCustomerByName(custiomName);
+    }
+
     public int updateCustomer(Customer customer) {
         return customerMapper.updateCustomer(customer);
     }

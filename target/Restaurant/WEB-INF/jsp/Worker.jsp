@@ -740,7 +740,7 @@
                     $("#updatecustomName").val(customer.customName);
                     $("#updatecustomTel").val(customer.customTel);
                     $("#updatecustGender").val(customer.custGender);
-                    
+
                     //确认修改
                     $("#updateCustomertBtn").unbind("click").bind("click",function () {
                         $.post({
@@ -988,7 +988,7 @@
             $("#clearOrderDesk").unbind("click").bind("click",function () {
 
                 $("#clearOrderDeskId .text").html("请选择");
-                $("#clearCustNmae").val("");
+                $("#clearCustName").val("");
                 $("#totalMoney").val("");
 
                 //获得未结账的桌号并添加到下拉菜单
@@ -1009,11 +1009,114 @@
                         $("#clearOrderDeskIdList").html(str);
                     }
                 })
-                clickList("#clearOrderDeskIdList","#clearOrderDeskId");
 
-                /*$("#clearOrderDeskIdList").on("click","li",function () {
+                $("#clearOrderDeskIdList").unbind("click").on("click","li",function () {
+                    var _this = this;
+                    $.post({
+                        url:("${pageContext.request.contextPath}/clearorderdish"),
+                        data:{
+                            deskId: $(this).text()
+                        },
+                        success:function (data) {
+                            var clearInfo = JSON.parse(data);
 
-                })*/
+                            $("#clearOrderDeskId .text").html($(_this).text());
+                            $("#clearCustName").val(clearInfo.customName);
+                            $("#totalMoney").val(clearInfo.totalMoney);
+                        }
+                    })
+                })
+
+                //确认结账按钮
+                $("#clearOrderDishBtn").unbind("click").bind("click",function () {
+                    $.post({
+                        url:("${pageContext.request.contextPath}/pay"),
+                        data:{
+                            deskId: $("#clearOrderDeskId .text").html(),
+                            customName: $("#clearCustName").val(),
+                            sal: $("#totalMoney").val()
+                        },
+                        success:function (data) {
+                            if(data){
+                                alert(data);
+                                $('#clearOrderDish').modal('hide');
+                                //顾客信息
+                                $("#customer").html("");
+                                $.post({
+                                    url: ("${pageContext.request.contextPath}/getcustomer"),
+                                    success: function (data) {
+                                        var customerInfo = JSON.parse(data);
+                                        var str =``;
+                                        for (var i = 0; i < customerInfo.length; i++){
+                                            str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${customerInfo[i].custId}"}</td>
+                            <td>${"${customerInfo[i].customName}"}</td>
+                            <td>${"${customerInfo[i].customTel}"}</td>
+                            <td>${"${customerInfo[i].custGender}"}</td>
+                            <td>
+                                <a href="#" title="删除" id="deletecustomer"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" id="updatecustomer"  data-toggle="modal" data-target="#updateCustomer"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                        }
+                                        $("#customer").html(str);
+                                    }
+                                });
+                                //订座信息
+                                $("#desklist").html("");
+                                $.post({
+                                    url:("${pageContext.request.contextPath}/getdesklist"),
+                                    success: function (data) {
+                                        var deskListInfo = JSON.parse(data);
+                                        var str = ``;
+                                        for (var i = 0; i < deskListInfo.length; i++){
+                                            str +=`<tr>
+                            <td width="49px"><input type="checkbox"></td>
+                            <td>${"${deskListInfo[i].deskId}"}</td>
+                            <td>${"${deskListInfo[i].deskState}"}</td>
+                            <td>${"${deskListInfo[i].customName}"}</td>
+                            <td>${"${deskListInfo[i].bookNumber}"}</td>
+                            <td>
+                                <a href="#" title="退订" class="deleteDeskList"><i class="iconfont iconfenxiang"></i><span>退订</span></a>&nbsp;&nbsp;/
+                                <a href="#" title="修改" class="updateDeskList"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                            </td>
+                        </tr>`;
+                                        }
+                                        $("#desklist").html(str);
+                                    }
+                                });
+                                //订单管理
+                                $("#orderdish").html("");
+                                $.post({
+                                    url:("${pageContext.request.contextPath}/getorderdish"),
+                                    success: function (data) {
+                                        var orderDishInfo = JSON.parse(data);
+                                        var str = ``;
+                                        for (var i = 0; i < orderDishInfo.length; i++){
+                                            str +=`<tr>
+                                    <td width="49px"><input type="checkbox"></td>
+                                    <td>${"${orderDishInfo[i].orderdishId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodId}"}</td>
+                                    <td>${"${orderDishInfo[i].foodName}"}</td>
+                                    <td>${"${orderDishInfo[i].foodClass}"}</td>
+                                    <td>${"${orderDishInfo[i].foodPrice}"}</td>
+                                    <td>${"${orderDishInfo[i].deskId}"}</td>
+                                    <td>
+                                        <a href="#" title="删除"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                        <a href="#" title="修改"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                    </td>
+                                </tr>`;
+                                        }
+                                        $("#orderdish").html(str);
+                                    }
+                                });
+                            }else {
+                                alert("结账失败");
+                            }
+                        }
+                    })
+                })
             })
         }
     </script>
@@ -1397,7 +1500,7 @@
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                                     </button>
                                     <button id="addorderDishBtn" type="button" class="btn btn-primary">
-                                        结账
+                                        确认
                                     </button>
                                 </div>
                             </div><!-- /.modal-content -->
@@ -1541,8 +1644,8 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="clearCustNmae">顾客姓名</label>
-                                            <input type="text" class="form-control" id="clearCustNmae" placeholder="顾客姓名">
+                                            <label for="clearCustName">顾客姓名</label>
+                                            <input type="text" class="form-control" id="clearCustName" placeholder="顾客姓名">
                                         </div>
 
                                         <div class="form-group">
@@ -1557,7 +1660,7 @@
                                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                                     </button>
                                     <button id="clearOrderDishBtn" type="button" class="btn btn-primary">
-                                        订菜
+                                        结账
                                     </button>
                                 </div>
                             </div><!-- /.modal-content -->

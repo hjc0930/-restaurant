@@ -11,6 +11,9 @@ public interface CustomerMapper {
     //delete
     int deleteCustomer(int custId);
 
+    //deleteByName
+    int deleteCustomerByName(String customName);
+
     //update
     int updateCustomer(Customer customer);
 

@@ -12,6 +12,10 @@
         delete from restaurantdb.customer where custId=#{custId}
     </delete>
 
+    <delete id="deleteCustomerByName" parameterType="String">
+        delete from restaurantdb.customer where customName=#{customName}
+    </delete>
+
     <update id="updateCustomer" parameterType="Customer">
         update restaurantdb.customer
         set customName = #{customName},customTel = #{customTel},custGender = #{custGender}
