@@ -19,4 +19,7 @@ public interface BizlistService {
 
     //search *
     List<Bizlist> queryAllBizlist();
+
+    //search where deskId
+    List<Bizlist> queryBizListByDeskId(int deskId);
 }

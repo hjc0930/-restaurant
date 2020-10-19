@@ -83,6 +83,8 @@
             addInfo();
             //删除修改模块
             operatorInfo();
+            //修改个人密码
+            changePwd();
         });
         //选项卡
         function Tab(node){
@@ -1130,6 +1132,35 @@
                 })
             })
         }
+        //修改个人密码
+        function changePwd() {
+            $("#changePwd").unbind("click").bind("click",function () {
+                $("#oldPwd").val("");
+                $("#newPwd").val("");
+                $("#DbNewPwd").val("");
+
+                $('#changePwdModal').modal('show');
+                var str = location.search;
+                var number = str.substring(str.indexOf("=") + 1);
+
+                $("#changePwdBtn").unbind("click").bind("click",function () {
+                    $.post({
+                        url:("${pageContext.request.contextPath}/changpwdmanager"),
+                        data:{
+                            Number: number,
+                            oldPwd:  $("#oldPwd").val(),
+                            newPwd:  $("#newPwd").val(),
+                            DbNewPwd:$("#DbNewPwd").val()
+                        },
+                        success:function (data) {
+                            alert(data);
+                            $('#changePwdModal').modal('hide');
+                            location.replace("${pageContext.request.contextPath}/index.jsp");
+                        }
+                    })
+                })
+            })
+        }
     </script>
 </head>
 <body>
@@ -1142,12 +1173,51 @@
             <i class="iconfont iconwode"></i>欢迎您,<span id="workerName"></span>&nbsp;管理员
         </li>
         <li>
-            <i class="iconfont iconyuechi"></i><a href="#">修改密码</a>
+            <i class="iconfont iconyuechi"></i><a href="#" id="changePwd">修改密码</a>
         </li>
         <li>
             <i class="iconfont iconfenxiang"></i><a href="${pageContext.request.contextPath}/index.jsp">退出</a>
         </li>
     </ul>
+    <!-- 修改密码模态框（Modal） -->
+    <div class="modal fade" id="changePwdModal" tabindex="-1" role="dialog" aria-labelledby="changePwdModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="changePwdModalLabel">
+                        修改密码
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="oldPwd">请输入原密码</label>
+                            <input type="password" class="form-control" id="oldPwd" placeholder="请输入原密码">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPwd">请输入新密码</label>
+                            <input type="password" class="form-control" id="newPwd" placeholder="请输入新密码">
+                        </div>
+                        <div class="form-group">
+                            <label for="DbNewPwd">再次输入新密码</label>
+                            <input type="password" class="form-control" id="DbNewPwd" placeholder="再次输入新密码">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button id="changePwdBtn" type="button" class="btn btn-primary">
+                        确认修改
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
 </header>
 <aside id="menu" class="l">
     <ul id="list">
@@ -1477,6 +1547,14 @@
                                 <div class="modal-body">
                                     <form>
                                         <div class="dropdown">
+                                            <label for="orderDeskId">桌号</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="orderDeskId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="orderDeskIdList" class="dropdown-menu" aria-labelledby="orderDeskId"></ul>
+                                        </div>
+                                        <div class="dropdown">
                                             <label for="orderFoodtId">菜号</label><br>
                                             <button class="btn btn-default dropdown-toggle" type="button" id="orderFoodtId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                 <span class="text">请选择</span>
@@ -1496,15 +1574,6 @@
                                             <label for="foodPrice">价格</label>
                                             <input type="text" class="form-control" id="foodPrice" placeholder="价格">
                                         </div>
-                                        <div class="dropdown">
-                                            <label for="orderDeskId">桌号</label><br>
-                                            <button class="btn btn-default dropdown-toggle" type="button" id="orderDeskId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                                <span class="text">请选择</span>
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul id="orderDeskIdList" class="dropdown-menu" aria-labelledby="orderDeskId"></ul>
-                                        </div>
-
                                     </form>
                                 </div>
                                 <div class="modal-footer">

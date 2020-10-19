@@ -18,6 +18,7 @@ public class BizlistController {
     @Qualifier("BizlistServiceImpl")
     private BizlistService bizlistService;
 
+    //获取所有信息
     @RequestMapping("/getbizlist")
     @ResponseBody
     public String getBizList() throws JsonProcessingException {
@@ -26,6 +27,7 @@ public class BizlistController {
         return mapper.writeValueAsString(bizlists);
     }
 
+    //添加
     @RequestMapping("/addbizlist")
     @ResponseBody
     public String addBizList(Bizlist bizlist){
@@ -35,4 +37,53 @@ public class BizlistController {
         }
         return isAdd;
     }
+
+    //删除
+    @RequestMapping("/deletebizlist")
+    @ResponseBody
+    public String deleteBizList(Bizlist bizlist){
+
+        String isDelete = null;
+        if(bizlistService.deleteBizlist(bizlist.getBizlistId()) > 0){
+            isDelete = "删除成功";
+        }
+
+        return isDelete;
+    }
+
+    //修改
+    @RequestMapping("/updatebizlist")
+    @ResponseBody
+    public String updateBizList(Bizlist bizlist){
+        String isUpdate = null;
+
+        if(bizlistService.updateBizlist(bizlist) > 0){
+            isUpdate = "修改成功";
+        }
+        return isUpdate;
+    }
+
+    //统计
+    @RequestMapping("/totalsal")
+    @ResponseBody
+    public String totalBizList(String totalInfo) throws JsonProcessingException {
+
+        double totalMoney = 0;
+        System.out.println(totalInfo);
+        if(totalInfo.equals("全部")){
+            List<Bizlist> bizlists = bizlistService.queryAllBizlist();
+            for (Bizlist bizlist : bizlists) {
+                totalMoney += bizlist.getSal();
+            }
+        }else{
+            int totalInfo_int = Integer.parseInt(totalInfo);
+            List<Bizlist> bizlists = bizlistService.queryBizListByDeskId(totalInfo_int);
+            for (Bizlist bizlist : bizlists) {
+                totalMoney += bizlist.getSal();
+            }
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(totalMoney);
+    }
+
 }

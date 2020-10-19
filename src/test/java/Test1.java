@@ -63,4 +63,13 @@ public class Test1 {
 
         System.out.println(orderdishService.deleteOrderdishBydeskId(0));
     }
+
+    @Test
+    public void searchBizList(){
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+        BizlistService bizlistServiceImpl = (BizlistService) context.getBean("BizlistServiceImpl");
+
+        System.out.println(bizlistServiceImpl.queryBizListByDeskId(13));
+    }
 }

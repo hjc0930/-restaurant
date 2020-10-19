@@ -26,4 +26,10 @@
     <select id="queryAllBizlist" resultType="Bizlist">
         SELECT * from restaurantdb.bizlist
     </select>
+
+    <select id="queryBizListByDeskId" resultType="Bizlist">
+        select *
+        from restaurantdb.bizlist
+        where deskId=#{deskId};
+    </select>
 </mapper>

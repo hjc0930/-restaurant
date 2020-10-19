@@ -35,4 +35,8 @@ public class BizlistServiceImpl implements BizlistService{
     public List<Bizlist> queryAllBizlist() {
         return bizlistMapper.queryAllBizlist();
     }
+
+    public List<Bizlist> queryBizListByDeskId(int deskId) {
+        return bizlistMapper.queryBizListByDeskId(deskId);
+    }
 }

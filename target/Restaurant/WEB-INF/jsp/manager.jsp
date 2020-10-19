@@ -78,8 +78,12 @@
             getInfo();
             //添加信息
             addInfo();
-            //功能模块
+            //修改删除功能模块
             operatorInfo();
+            //统计
+            toTal();
+            //修改个人密码
+            changePwd();
         })
         //选项卡
         function Tab(node){
@@ -89,6 +93,13 @@
                 $(this).attr("class","active");
                 $(".projectList_cons").eq($(this).index()).css("display","block");
             });
+        }
+        //下拉菜单点击
+        function clickList(node1,node2) {
+            $(node1).on("click","li",function () {
+                $(node2+" .text").html("");
+                $(node2+" .text").html($(this).text());
+            })
         }
         //获得管理员姓名并显示
         function getName() {
@@ -592,6 +603,192 @@
                     })
                 })
             })
+
+            //删除修改营业信息
+            $("#bizlist").unbind("click").on("click","a",function () {
+                //删除
+                if($(this).text() == "删除"){
+                    var _this = this;
+                    $('#deleteBizList').modal('show');
+
+                    //将选中的营业信息显示在模态框中
+                    $("#deleteDeskId").val($(this).parent().prevAll().eq(2).html());
+                    $("#deleteCustomName").val($(this).parent().prevAll().eq(1).html());
+                    $("#deleteSal").val($(this).parent().prevAll().eq(0).html());
+
+                    //确认删除按钮
+                    $("#deleteBizListBtn").unbind("click").bind("click",function () {
+                    $.post({
+                        url:("${pageContext.request.contextPath}/deletebizlist"),
+                        data:{
+                            bizlistId: $(_this).parent().prevAll().eq(3).html()
+                        },
+                        success:function (data) {
+                            if(data != null){
+                                alert(data);
+                                $('#deleteBizList').modal('hide');
+                                /*重新读取信息*/
+                                $("#bizlist").html("");
+                                $.post({
+                                    url:("${pageContext.request.contextPath}/getbizlist"),
+                                    success:function (data) {
+                                        var bizListInfo = JSON.parse(data);
+                                        var str =``;
+                                        for (var i = 0; i < bizListInfo.length; i++){
+                                            str +=`<tr>
+                                                        <td width="49px"><input type="checkbox"></td>
+                                                        <td>${"${bizListInfo[i].bizlistId}"}</td>
+                                                        <td>${"${bizListInfo[i].deskId}"}</td>
+                                                        <td>${"${bizListInfo[i].customName}"}</td>
+                                                        <td>${"${bizListInfo[i].sal}"}</td>
+                                                        <td>
+                                                            <a href="#" title="删除" id="deletebizlist"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                                            <a href="#" title="修改" id="updatebizlist"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                                        </td>
+                                                    </tr>`;
+                                        }
+                                        $("#bizlist").html(str);
+                                    }
+                                });
+                            }else {
+                                alert("删除失败，请重试");
+                            }
+                        }
+                    })
+
+                    })
+                }
+                //修改
+                else if($(this).text() == "修改"){
+                    var _this = this;
+                    //初始化界面
+                    $("#updateDeskId").val("");
+                    $("#updateCustomName").val("");
+                    $("#updateSal").val("");
+
+                    $('#updateBizList').modal('show');
+                    //将选中的营业信息显示在模态框中
+                    $("#updateDeskId").val($(this).parent().prevAll().eq(2).html());
+                    $("#updateCustomName").val($(this).parent().prevAll().eq(1).html());
+                    $("#updateSal").val($(this).parent().prevAll().eq(0).html());
+
+                    //确认修改按钮
+                    $("#updateBizListBtn").unbind("click").bind("click",function () {
+                        $.post({
+                            url:("${pageContext.request.contextPath}/updatebizlist"),
+                            data:{
+                                bizlistId: $(_this).parent().prevAll().eq(3).html(),
+                                deskId:$("#updateDeskId").val(),
+                                customName: $("#updateCustomName").val(),
+                                sal:$("#updateSal").val()
+                            },
+                            success:function (data) {
+                                if(data != null){
+                                    alert(data);
+                                    $('#updateBizList').modal('hide');
+                                    /*重新读取信息*/
+                                    $("#bizlist").html("");
+                                    $.post({
+                                        url:("${pageContext.request.contextPath}/getbizlist"),
+                                        success:function (data) {
+                                            var bizListInfo = JSON.parse(data);
+                                            var str =``;
+                                            for (var i = 0; i < bizListInfo.length; i++){
+                                                str +=`<tr>
+                                                        <td width="49px"><input type="checkbox"></td>
+                                                        <td>${"${bizListInfo[i].bizlistId}"}</td>
+                                                        <td>${"${bizListInfo[i].deskId}"}</td>
+                                                        <td>${"${bizListInfo[i].customName}"}</td>
+                                                        <td>${"${bizListInfo[i].sal}"}</td>
+                                                        <td>
+                                                            <a href="#" title="删除" id="deletebizlist"><i class="iconfont iconshanchu"></i><span>删除</span></a>&nbsp;&nbsp;/
+                                                            <a href="#" title="修改" id="updatebizlist"><i class="iconfont iconbianji"></i><span>修改</span></a>
+                                                        </td>
+                                                    </tr>`;
+                                            }
+                                            $("#bizlist").html(str);
+                                        }
+                                    });
+                                }else {
+                                    alert("修改失败，请重试");
+                                }
+                            }
+                        })
+
+                    })
+                }
+            })
+        }
+        //统计信息
+        function toTal() {
+            $("#totalBizListSal").unbind("click").bind("click",function () {
+                $("#bizListDeskId .text").html("请选择");
+                $("#totalSal").val("");
+
+                //获得座位号并添加
+                $.post({
+                    url:("${pageContext.request.contextPath}/getbizlist"),
+                    success:function (data) {
+                        let bizListInfo = JSON.parse(data);
+
+                        let set = new Set();
+                        for (let i = 0; i< bizListInfo.length; i++){
+                            set.add(bizListInfo[i].deskId);
+                        }
+
+                        let str = `<li><a href="#">${"全部"}</a></li>`;
+                        for (let deskId of set){
+                            str += `<li><a href="#">${"${deskId}"}</a></li>`;
+                        }
+                        $("#bizListDeskIdList").html(str);
+                    }
+                })
+                clickList("#bizListDeskIdList","#bizListDeskId");
+            });
+
+            $("#bizListDeskIdList").unbind("click").on("click","li",function () {
+                $("#bizListDeskId .text").html($(this).text());
+
+                $.post({
+                    url:("${pageContext.request.contextPath}/totalsal"),
+                    data:{
+                        totalInfo: $(this).text()
+                    },
+                    success:function (data) {
+                        $("#totalSal").val(JSON.parse(data));
+                    }
+                })
+            })
+        }
+
+        //修改个人密码
+        function changePwd() {
+            $("#changePwd").unbind("click").bind("click",function () {
+                $("#oldPwd").val("");
+                $("#newPwd").val("");
+                $("#DbNewPwd").val("");
+
+                $('#changePwdModal').modal('show');
+                var str = location.search;
+                var number = str.substring(str.indexOf("=") + 1);
+
+                $("#changePwdBtn").unbind("click").bind("click",function () {
+                    $.post({
+                        url:("${pageContext.request.contextPath}/changpwdmanager"),
+                        data:{
+                            Number: number,
+                            oldPwd:  $("#oldPwd").val(),
+                            newPwd:  $("#newPwd").val(),
+                            DbNewPwd:$("#DbNewPwd").val()
+                        },
+                        success:function (data) {
+                            alert(data);
+                            $('#changePwdModal').modal('hide');
+                            location.replace("${pageContext.request.contextPath}/index.jsp");
+                        }
+                    })
+                })
+            })
         }
     </script>
 </head>
@@ -605,12 +802,51 @@
             <i class="iconfont iconwode"></i>欢迎您,<span id="managerName"></span>&nbsp;管理员
         </li>
         <li>
-            <i class="iconfont iconyuechi"></i><a href="#">修改密码</a>
+            <i class="iconfont iconyuechi"></i><a href="#" id="changePwd">修改密码</a>
         </li>
         <li>
             <i class="iconfont iconfenxiang"></i><a href="${pageContext.request.contextPath}/index.jsp">退出</a>
         </li>
     </ul>
+    <!-- 修改密码模态框（Modal） -->
+    <div class="modal fade" id="changePwdModal" tabindex="-1" role="dialog" aria-labelledby="changePwdModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="changePwdModalLabel">
+                        修改密码
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="oldPwd">请输入原密码</label>
+                            <input type="password" class="form-control" id="oldPwd" placeholder="请输入原密码">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPwd">请输入新密码</label>
+                            <input type="password" class="form-control" id="newPwd" placeholder="请输入新密码">
+                        </div>
+                        <div class="form-group">
+                            <label for="DbNewPwd">再次输入新密码</label>
+                            <input type="password" class="form-control" id="DbNewPwd" placeholder="再次输入新密码">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button id="changePwdBtn" type="button" class="btn btn-primary">
+                        确认修改
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
 </header>
 <aside id="menu" class="l">
     <ul id="list">
@@ -949,11 +1185,11 @@
             <%--营业查询--%>
             <div class="projectList_cons clear">
                 <div class="show clear">
-                    <!-- 按钮触发模态框 -->
+                    <!-- 添加按钮触发模态框 -->
                     <button class="btn btn-primary" data-toggle="modal" data-target="#addBizList">
                         添加营业信息
                     </button>
-                    <!-- 模态框（Modal） -->
+                    <!-- 添加营业信息模态框（Modal） -->
                     <div class="modal fade" id="addBizList" tabindex="-1" role="dialog" aria-labelledby="bizListtModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -986,6 +1222,129 @@
                                     </button>
                                     <button id="addBizListBtn" type="button" class="btn btn-primary">
                                         添加
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+                    <!-- 添加按钮触发模态框 -->
+                    <button id="totalBizListSal" class="btn btn-primary" data-toggle="modal" data-target="#totalBizList">
+                        统计
+                    </button>
+                    <!-- 统计营业信息模态框（Modal） -->
+                    <div class="modal fade" id="totalBizList" tabindex="-1" role="dialog" aria-labelledby="totalBizListtModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="totalBizListtModalLabel">
+                                        营业信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+
+                                        <div class="dropdown">
+                                            <label for="bizListDeskId">桌号</label><br>
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="bizListDeskId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                <span class="text">请选择</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul id="bizListDeskIdList" class="dropdown-menu" aria-labelledby="bizListDeskId"></ul>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="Sal">总金额</label>
+                                            <input type="text" class="form-control" id="totalSal" placeholder="总金额">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <%--<button id="addBizListBtn" type="button" class="btn btn-primary">
+                                        添加
+                                    </button>--%>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+                    <!-- 删除营业信息模态框（Modal） -->
+                    <div class="modal fade" id="deleteBizList" tabindex="-1" role="dialog" aria-labelledby="deleteBizListtModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="deleteBizListtModalLabel">
+                                        请核对营业信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="deleteDeskId">座位号</label>
+                                            <input type="text" class="form-control" id="deleteDeskId" placeholder="座位号" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="deleteCustomName">订单客户</label>
+                                            <input type="text" class="form-control" id="deleteCustomName" placeholder="订单客户" disabled>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="deleteSal">订单总额</label>
+                                            <input type="text" class="form-control" id="deleteSal" placeholder="订单总额" disabled>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="deleteBizListBtn" type="button" class="btn btn-primary">
+                                        确认删除
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+                    <!-- 修改营业信息模态框（Modal） -->
+                    <div class="modal fade" id="updateBizList" tabindex="-1" role="dialog" aria-labelledby="updateBizListtModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <h4 class="modal-title" id="updateBizListtModalLabel">
+                                        修改营业信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="updateDeskId">座位号</label>
+                                            <input type="text" class="form-control" id="updateDeskId" placeholder="座位号">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateCustomName">订单客户</label>
+                                            <input type="text" class="form-control" id="updateCustomName" placeholder="订单客户">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="updateSal">订单总额</label>
+                                            <input type="text" class="form-control" id="updateSal" placeholder="订单总额">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                    </button>
+                                    <button id="updateBizListBtn" type="button" class="btn btn-primary">
+                                        确认修改
                                     </button>
                                 </div>
                             </div><!-- /.modal-content -->

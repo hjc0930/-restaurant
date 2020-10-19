@@ -19,4 +19,7 @@ public interface BizlistMapper {
 
     //search *
     List<Bizlist> queryAllBizlist();
+
+    //search where deskId
+    List<Bizlist> queryBizListByDeskId(int deskId);
 }
