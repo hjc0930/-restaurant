@@ -1166,7 +1166,7 @@
 <body>
 <header id="header" class="clear">
     <hgroup class="header_logo l clear">
-        <h2 class="l">校园点餐管理系统前台</h2>
+        <h2 class="l">餐饮管理系统前台</h2>
     </hgroup>
     <ul class="header_nav r clear">
         <li>
@@ -1267,15 +1267,15 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="customName">顾客姓名</label>
-                                            <input type="text" class="form-control" id="customName" placeholder="顾客姓名">
+                                            <input type="text" class="form-control" id="customName" placeholder="顾客姓名" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="customTel">联系电话</label>
-                                            <input type="text" class="form-control" id="customTel" placeholder="联系电话">
+                                            <input type="text" class="form-control" id="customTel" placeholder="联系电话" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="custGender">性别</label>
-                                            <input type="text" class="form-control" id="custGender" placeholder="性别">
+                                            <input type="text" class="form-control" id="custGender" placeholder="性别" autocomplete="off">
                                         </div>
                                     </form>
                                 </div>
@@ -1309,15 +1309,15 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="updatecustomName">顾客姓名</label>
-                                            <input type="text" class="form-control" id="updatecustomName" placeholder="顾客姓名">
+                                            <input type="text" class="form-control" id="updatecustomName" placeholder="顾客姓名"  autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="updatecustomTel">联系电话</label>
-                                            <input type="text" class="form-control" id="updatecustomTel" placeholder="联系电话">
+                                            <input type="text" class="form-control" id="updatecustomTel" placeholder="联系电话"  autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="updatecustGender">性别</label>
-                                            <input type="text" class="form-control" id="updatecustGender" placeholder="性别">
+                                            <input type="text" class="form-control" id="updatecustGender" placeholder="性别"  autocomplete="off">
                                         </div>
                                     </form>
                                 </div>
@@ -1378,11 +1378,11 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="dcustomName">顾客姓名</label>
-                                            <input type="text" class="form-control" id="dcustomName" placeholder="顾客姓名">
+                                            <input type="text" class="form-control" id="dcustomName" placeholder="顾客姓名" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="dcustomTel">联系电话</label>
-                                            <input type="text" class="form-control" id="dcustomTel" placeholder="联系电话">
+                                            <input type="text" class="form-control" id="dcustomTel" placeholder="联系电话" autocomplete="off">
                                         </div>
 
                                         <div class="dropdown">
@@ -1399,7 +1399,7 @@
 
                                         <div class="form-group">
                                             <label for="bookNumber">预订人数</label>
-                                            <input type="text" class="form-control" id="bookNumber" placeholder="预订人数">
+                                            <input type="text" class="form-control" id="bookNumber" placeholder="预订人数" autocomplete="off">
                                         </div>
                                     </form>
                                 </div>
@@ -1433,17 +1433,17 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="quitDcustomName">顾客姓名</label>
-                                            <input type="text" class="form-control" id="quitDcustomName" placeholder="顾客姓名">
+                                            <input type="text" class="form-control" id="quitDcustomName" placeholder="顾客姓名" disabled>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="quitDcustomTel">联系电话</label>
-                                            <input type="text" class="form-control" id="quitDcustomTel" placeholder="联系电话">
+                                            <input type="text" class="form-control" id="quitDcustomTel" placeholder="联系电话" disabled>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="quitBookNumber">预订人数</label>
-                                            <input type="text" class="form-control" id="quitBookNumber" placeholder="预订人数">
+                                            <input type="text" class="form-control" id="quitBookNumber" placeholder="预订人数" disabled>
                                         </div>
                                     </form>
                                 </div>
@@ -1483,7 +1483,7 @@
 
                                         <div class="form-group">
                                             <label for="updateDcustomName">顾客姓名</label>
-                                            <input type="text" class="form-control" id="updateDcustomName" placeholder="顾客姓名">
+                                            <input type="text" class="form-control" id="updateDcustomName" placeholder="顾客姓名" disabled>
                                         </div>
 
                                         <div class="form-group">
@@ -1493,7 +1493,7 @@
 
                                         <div class="form-group">
                                             <label for="updateBookNumber">预订人数</label>
-                                            <input type="text" class="form-control" id="updateBookNumber" placeholder="预订人数">
+                                            <input type="text" class="form-control" id="updateBookNumber" placeholder="预订人数" autocomplete="off">
                                         </div>
                                     </form>
                                 </div>
@@ -1564,15 +1564,15 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="foodName">菜名</label>
-                                            <input type="text" class="form-control" id="foodName" placeholder="菜名">
+                                            <input type="text" class="form-control" id="foodName" placeholder="菜名" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="foodClass">菜系</label>
-                                            <input type="text" class="form-control" id="foodClass" placeholder="菜系">
+                                            <input type="text" class="form-control" id="foodClass" placeholder="菜系" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="foodPrice">价格</label>
-                                            <input type="text" class="form-control" id="foodPrice" placeholder="价格">
+                                            <input type="text" class="form-control" id="foodPrice" placeholder="价格" autocomplete="off">
                                         </div>
                                     </form>
                                 </div>
@@ -1603,27 +1603,27 @@
                                     <form>
                                         <div class="form-group">
                                             <label for="deleteOrderDishId">订单Id</label>
-                                            <input type="text" class="form-control" id="deleteOrderDishId" placeholder="订单Id" disabled>
+                                            <input type="text" class="form-control" id="deleteOrderDishId" placeholder="订单Id" disabled autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="deleteOrderFoodId">菜品Id</label>
-                                            <input type="text" class="form-control" id="deleteOrderFoodId" placeholder="菜品Id" disabled>
+                                            <input type="text" class="form-control" id="deleteOrderFoodId" placeholder="菜品Id" disabled autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="deleteOrderFoodName">菜名</label>
-                                            <input type="text" class="form-control" id="deleteOrderFoodName" placeholder="菜名">
+                                            <input type="text" class="form-control" id="deleteOrderFoodName" placeholder="菜名" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="deleteOrderFoodClass">菜系</label>
-                                            <input type="text" class="form-control" id="deleteOrderFoodClass" placeholder="菜系">
+                                            <input type="text" class="form-control" id="deleteOrderFoodClass" placeholder="菜系" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="deleteOrderFoodPrice">价格</label>
-                                            <input type="text" class="form-control" id="deleteOrderFoodPrice" placeholder="价格">
+                                            <input type="text" class="form-control" id="deleteOrderFoodPrice" placeholder="价格" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="deleteDeskId">桌号</label>
-                                            <input type="text" class="form-control" id="deleteDeskId" placeholder="桌号">
+                                            <input type="text" class="form-control" id="deleteDeskId" placeholder="桌号" autocomplete="off">
                                         </div>
 
                                     </form>
@@ -1663,15 +1663,15 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="updateFoodName">菜名</label>
-                                            <input type="text" class="form-control" id="updateFoodName" placeholder="菜名">
+                                            <input type="text" class="form-control" id="updateFoodName" placeholder="菜名" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="updateFoodClass">菜系</label>
-                                            <input type="text" class="form-control" id="updateFoodClass" placeholder="菜系">
+                                            <input type="text" class="form-control" id="updateFoodClass" placeholder="菜系" autocomplete="off">
                                         </div>
                                         <div class="form-group">
                                             <label for="updateFoodPrice">价格</label>
-                                            <input type="text" class="form-control" id="updateFoodPrice" placeholder="价格">
+                                            <input type="text" class="form-control" id="updateFoodPrice" placeholder="价格" autocomplete="off">
                                         </div>
                                         <div class="dropdown">
                                             <label for="updateOrderDeskId">桌号</label><br>
@@ -1768,7 +1768,7 @@
     </section>
 </main>
 <footer id="footer">
-    测试文字测试文字测试文字测试文字测试文字测试文字测试文字测试文字
+
 </footer>
 </body>
 </html>

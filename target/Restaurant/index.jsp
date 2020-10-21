@@ -44,11 +44,11 @@
         <form>
             <div class="form-group">
                 <label for="number">登录名:</label>
-                <input id="number" type="text" class="form-control" style="color:red;">
+                <input id="number" type="text" class="form-control" style="color:red;" autocomplete="off">
             </div>
             <div class="form-group">
                 <label for="pwd">密码</label>
-                <input id="pwd" type="password" class="form-control" style="color:red;">
+                <input id="pwd" type="password" class="form-control" style="color:red;" autocomplete="off">
             </div>
             <div class="form-group">
                 <input id="login" type="button" value="登陆" class="btn btn-success form-control">
